@@ -19,6 +19,7 @@ from homeassistant.const import STATE_OFF, STATE_ON, STATE_UNAVAILABLE
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr, issue_registry as ir
 from homeassistant.setup import async_setup_component
+from homeassistant.util import dt as dt_util
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry, async_fire_time_changed
 from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker, AiohttpClientMockResponse
@@ -309,17 +310,30 @@ async def test_speedtest_gives_up(
     assert hass.states.get(running).state == STATE_OFF
 
 
-async def test_auto_speedtest(
-    hass: HomeAssistant, setup: MockConfigEntry, aioclient_mock: AiohttpClientMocker, freezer: FrozenDateTimeFactory
-) -> None:
-    await hass.services.async_call("switch", "turn_on", {"entity_id": "switch.unifi_wan_auto_speedtest"}, blocking=True)
-    freezer.tick(timedelta(minutes=61))
-    async_fire_time_changed(hass)
-    await hass.async_block_till_done()
-    assert {"cmd": "speedtest"} in calls(aioclient_mock, "POST", "cmd/devmgr")
-    await hass.services.async_call(
-        "switch", "turn_off", {"entity_id": "switch.unifi_wan_auto_speedtest"}, blocking=True
-    )
+async def test_auto_speedtest(hass: HomeAssistant, aioclient_mock: AiohttpClientMocker) -> None:
+    """Der Schalter plant den Speedtest im eingestellten Abstand; der Zeitgeber wird hier direkt ausgelöst, statt
+    auf die Uhr zu warten (sonst hängt der Test am Timing der CI-Rechner)."""
+    timers: list[tuple[Any, timedelta]] = []
+
+    def track(_hass: HomeAssistant, action: Any, interval: timedelta) -> Any:
+        timers.append((action, interval))
+        return lambda: None
+
+    mock_router(aioclient_mock)
+    with patch("custom_components.udr7.switch.async_track_time_interval", side_effect=track):
+        await _setup(hass)
+        # Standard an: ein Zeitgeber im Abstand aus den Optionen (Standard 60 Minuten)
+        assert [interval for _action, interval in timers] == [timedelta(minutes=60)]
+        await timers[-1][0](dt_util.utcnow())
+        await hass.async_block_till_done()
+        assert {"cmd": "speedtest"} in calls(aioclient_mock, "POST", "cmd/devmgr")
+        # Läuft schon ein Speedtest, startet der Zeitgeber keinen zweiten
+        aioclient_mock.mock_calls.clear()
+        await timers[-1][0](dt_util.utcnow())
+        assert calls(aioclient_mock, "POST", "cmd/devmgr") == []
+        await hass.services.async_call(
+            "switch", "turn_off", {"entity_id": "switch.unifi_wan_auto_speedtest"}, blocking=True
+        )
     assert hass.states.get("switch.unifi_wan_auto_speedtest").state == STATE_OFF
 
 
