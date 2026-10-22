@@ -11,7 +11,7 @@
 <meta name="theme-color" content="#060B14" media="(prefers-color-scheme: dark)">
 <meta property="og:title" content="UniFi Dream Router 7 for Home Assistant">
 <meta property="og:description" content="Your Dream Router 7 and every UniFi device behind it in Home Assistant. Local, no cloud.">
-<meta property="og:image" content="https://sh1ft-w.github.io/unifi-dreamrouter7/logo.png">
+<meta property="og:image" content="https://sh1ft-w.github.io/unifi-dreamrouter7/images/readme-title.png">
 <link rel="icon" href="logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -103,11 +103,7 @@ section.tint { background: var(--bg-2); }
 .pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; background: var(--card); box-shadow: var(--shadow); font-weight: 600; color: var(--ink-2); font-size: 13px; }
 .pill i { width: 7px; height: 7px; border-radius: 50%; background: var(--orange); display: inline-block; }
 
-/* Bühne: Produktfoto mit Karten darunter (bleibt in beiden Themes dunkel) */
-.stage.has-product { padding-top: clamp(28px, 4vw, 44px); }
-.product { display: block; height: clamp(220px, 30vw, 340px); width: auto; margin: 0 auto; position: relative; filter: drop-shadow(0 34px 44px rgba(0,0,0,0.55)); }
-.stage .halo { position: absolute; left: 50%; top: 0; width: min(520px, 80%); height: 380px; transform: translateX(-50%); pointer-events: none;
-  background: radial-gradient(closest-side, rgba(47,139,255,0.30), transparent); filter: blur(30px); }
+/* Bühne: Szene mit Karten darunter (bleibt in beiden Themes dunkel) */
 .scene { display: block; width: calc(100% + 2 * clamp(16px, 4vw, 48px)); max-width: none; margin: 0 calc(-1 * clamp(16px, 4vw, 48px)); aspect-ratio: 1219 / 620; object-fit: cover; border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   -webkit-mask-image: linear-gradient(180deg, #000 72%, transparent); mask-image: linear-gradient(180deg, #000 72%, transparent); }
 .stage { position: relative; margin: clamp(48px, 7vw, 84px) auto 0; max-width: 1000px; border-radius: var(--radius-lg); padding: 0 clamp(16px, 4vw, 48px) clamp(28px, 5vw, 56px);
@@ -308,10 +304,9 @@ footer .fine { flex-basis: 100%; line-height: 1.6; }
       <span class="en">Home Assistant 2026.9 or newer &middot; English and German &middot; Apache 2.0</span><span class="de">Home Assistant 2026.9 oder neuer &middot; Deutsch und Englisch &middot; Apache 2.0</span>
     </p>
 
-    <div class="stage has-product reveal d3" role="img" aria-label="Illustration: the Dream Router 7, below it an internet card and a list of switches and values. Made-up values.">
-      <div class="halo" aria-hidden="true"></div>
-      <img class="product" src="images/product.webp" width="423" height="720" fetchpriority="high" alt="">
-      <div class="cards" style="position: relative;">
+    <div class="stage reveal d3" role="img" aria-label="Illustration: a Dream Router 7 on a desk next to a monitor, below it an internet card and a list of switches and values. Illustrated scene, made-up values.">
+      <img class="scene" src="images/hero-photo.webp" width="999" height="508" fetchpriority="high" alt="">
+      <div class="cards" style="margin-top: clamp(-28px, -2vw, -12px); position: relative;">
         <div class="hc">
           <div class="top">
             <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></span>
@@ -333,7 +328,7 @@ footer .fine { flex-basis: 100%; line-height: 1.6; }
           </div>
         </div>
       </div>
-      <p class="fict"><span class="en">Illustration: Ubiquiti product photo and made-up values, not a screenshot.</span><span class="de">Illustration: Produktfoto von Ubiquiti und erfundene Werte, kein Screenshot.</span></p>
+      <p class="fict"><span class="en">Illustration: illustrated scene and made-up values, not a screenshot.</span><span class="de">Illustration: gezeichnete Szene und erfundene Werte, kein Screenshot.</span></p>
     </div>
   </div>
 </section>
@@ -507,7 +502,7 @@ footer .fine { flex-basis: 100%; line-height: 1.6; }
       <a href="https://github.com/SH1FT-W/unifi-dreamrouter7">GitHub</a>
       <a href="https://github.com/SH1FT-W/unifi-dreamrouter7/blob/main/LICENSE"><span class="en">Apache 2.0 License</span><span class="de">Apache-2.0-Lizenz</span></a>
     </nav>
-    <p class="fine"><span class="en">UniFi Dream Router 7 is an independent project and is not affiliated with, endorsed by or sponsored by Ubiquiti Inc., Home Assistant or Nabu Casa. UniFi, UniFi OS, UniFi Network and Dream Router are trademarks of Ubiquiti Inc. The product photo is Ubiquiti's.</span><span class="de">UniFi Dream Router 7 ist ein unabhängiges Projekt und gehört weder zu Ubiquiti Inc., Home Assistant noch Nabu Casa und wird von ihnen nicht unterstützt. UniFi, UniFi OS, UniFi Network und Dream Router sind Marken von Ubiquiti Inc. Das Produktfoto stammt von Ubiquiti.</span></p>
+    <p class="fine"><span class="en">UniFi Dream Router 7 is an independent project and is not affiliated with, endorsed by or sponsored by Ubiquiti Inc., Home Assistant or Nabu Casa. UniFi, UniFi OS, UniFi Network and Dream Router are trademarks of Ubiquiti Inc.</span><span class="de">UniFi Dream Router 7 ist ein unabhängiges Projekt und gehört weder zu Ubiquiti Inc., Home Assistant noch Nabu Casa und wird von ihnen nicht unterstützt. UniFi, UniFi OS, UniFi Network und Dream Router sind Marken von Ubiquiti Inc.</span></p>
   </div>
 </footer>
 

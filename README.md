@@ -1,8 +1,6 @@
 <div align="center">
 
-<img src="docs/logo.png" width="160" alt="UniFi Dream Router 7" />
-
-# UniFi Dream Router 7 for Home Assistant
+<img src="docs/images/readme-title.webp" alt="UniFi Dream Router 7 for Home Assistant: your network, fully local. A Dream Router 7 on a desk next to a monitor with a network dashboard, in warm afternoon light (illustrated scene)." />
 
 <p>Your Dream Router 7, its WiFi, firewall, clients and every UniFi device behind it.<br/>
 Local, no cloud, more control than the official UniFi integration.</p>
