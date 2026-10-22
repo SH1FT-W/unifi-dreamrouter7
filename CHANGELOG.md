@@ -1,5 +1,10 @@
 # Changelog
 
+## 26.10.2 – 22.10.2026
+
+- Fixed: the "Started" sensors of the router, access points and switches (and "Connected since" of clients) no longer jump back and forth by a minute every few seconds and flood the logbook. The time only changes on a real restart or reconnect.
+- Fixed: the presence tracker of a chosen client could be added disabled when Home Assistant set it up before the client's device existed.
+
 ## 26.10.1 – 22.10.2026
 
 First release.

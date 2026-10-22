@@ -16,7 +16,7 @@ from homeassistant.util.ssl import get_default_no_verify_context
 from .api import UdrClient, UdrError
 from .const import CONF_FINGERPRINT, CONF_SITE, DEFAULT_SITE, DOMAIN
 from .coordinator import UdrConfigEntry, UdrCoordinator
-from .entity import hub_device_info, hub_identifier, tracked_clients
+from .entity import client_device_info, hub_device_info, hub_identifier, tracked_clients
 from .services import async_setup_services
 
 PLATFORMS = [
@@ -80,8 +80,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: UdrConfigEntry) -> bool:
     await coordinator.async_load_storage()
     await coordinator.async_config_entry_first_refresh()
     entry.runtime_data = coordinator
-    device = dr.async_get(hass).async_get_or_create(config_entry_id=entry.entry_id, **hub_device_info(coordinator))
+    registry = dr.async_get(hass)
+    device = registry.async_get_or_create(config_entry_id=entry.entry_id, **hub_device_info(coordinator))
     coordinator.device_id = device.id
+    # Client-Geräte vor den Plattformen: HA schaltet einen device_tracker ab, wenn sein Gerät (MAC) noch fehlt
+    for mac in tracked_clients(entry):
+        registry.async_get_or_create(config_entry_id=entry.entry_id, **client_device_info(coordinator, mac))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     # Produktbilder kommen aus dem Internet; der Start wartet nicht darauf
     entry.async_create_background_task(hass, coordinator.async_load_pictures(), "udr7 device pictures")

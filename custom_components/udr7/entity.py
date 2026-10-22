@@ -52,6 +52,18 @@ def hub_device_info(coordinator: UdrCoordinator) -> DeviceInfo:
     return DeviceInfo(identifiers={hub_identifier(coordinator)}, manufacturer=MANUFACTURER)
 
 
+def client_device_info(coordinator: UdrCoordinator, mac: str) -> DeviceInfo:
+    """Gerät eines ausgewählten Clients, über die MAC (dort hängt HA auch den device_tracker an)."""
+    client = coordinator.data.clients.get(mac) or coordinator.data.known_clients.get(mac)
+    info = DeviceInfo(
+        connections={(dr.CONNECTION_NETWORK_MAC, mac)},
+        name=client.display_name if client else mac,
+    )
+    if coordinator.device_id:
+        info["via_device_id"] = coordinator.device_id
+    return info
+
+
 class UdrEntity(CoordinatorEntity[UdrCoordinator]):
     """Gehört zum Dream Router selbst (Werte des ganzen Netzes)."""
 
@@ -132,14 +144,7 @@ class ClientEntity(CoordinatorEntity[UdrCoordinator]):
         self._mac = mac
         self._attr_translation_key = key
         self._attr_unique_id = f"client_{mac}_{key}"
-        client = coordinator.data.clients.get(mac) or coordinator.data.known_clients.get(mac)
-        info = DeviceInfo(
-            connections={(dr.CONNECTION_NETWORK_MAC, mac)},
-            name=client.display_name if client else mac,
-        )
-        if coordinator.device_id:
-            info["via_device_id"] = coordinator.device_id
-        self._attr_device_info = info
+        self._attr_device_info = client_device_info(coordinator, mac)
 
     @property
     def client(self) -> Client | None:

@@ -59,6 +59,17 @@ def started(uptime: float | None) -> datetime | None:
     return (dt_util.utcnow() - timedelta(seconds=uptime)).replace(second=0, microsecond=0)
 
 
+# Geräte melden die Laufzeit nur alle paar Sekunden, der errechnete Start pendelt deshalb über die Minutengrenze
+STARTED_TOLERANCE = timedelta(minutes=2)
+
+
+def steady(old: StateType | datetime, new: StateType | datetime) -> StateType | datetime:
+    """Neuer Startzeitpunkt nur bei echter Änderung (Neustart, neue Verbindung), sonst bleibt der bisherige."""
+    if isinstance(old, datetime) and isinstance(new, datetime) and abs(new - old) <= STARTED_TOLERANCE:
+        return old
+    return new
+
+
 def _wan_availability(d: UdrData) -> float | None:
     return num(as_dict(as_dict(d.get("wan", "uptime_stats")).get("WAN")).get("availability"))
 
@@ -506,6 +517,7 @@ class NetworkSensor(UdrEntity, SensorEntity):
 
 class DeviceSensor(DeviceEntity, SensorEntity):
     entity_description: DeviceSensorDescription
+    _value: StateType | datetime = None
 
     def __init__(self, coordinator: UdrCoordinator, device: Device, description: DeviceSensorDescription) -> None:
         super().__init__(coordinator, device, description.key)
@@ -514,7 +526,8 @@ class DeviceSensor(DeviceEntity, SensorEntity):
     @property
     def native_value(self) -> StateType | datetime:
         device = self.device
-        return self.entity_description.value_fn(device) if device else None
+        self._value = steady(self._value, self.entity_description.value_fn(device) if device else None)
+        return self._value
 
 
 class RadioSensor(DeviceEntity, SensorEntity):
@@ -565,6 +578,7 @@ class PortSensor(DeviceEntity, SensorEntity):
 
 class ClientSensor(ClientEntity, SensorEntity):
     entity_description: ClientSensorDescription
+    _value: StateType | datetime = None
 
     def __init__(self, coordinator: UdrCoordinator, mac: str, description: ClientSensorDescription) -> None:
         super().__init__(coordinator, mac, description.key)
@@ -578,4 +592,5 @@ class ClientSensor(ClientEntity, SensorEntity):
     @property
     def native_value(self) -> StateType | datetime:
         client = self.coordinator.data.clients.get(self._mac)
-        return self.entity_description.value_fn(client) if client else None
+        self._value = steady(self._value, self.entity_description.value_fn(client) if client else None)
+        return self._value

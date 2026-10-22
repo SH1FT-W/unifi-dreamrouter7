@@ -380,6 +380,26 @@ async def test_offline_device(hass: HomeAssistant, setup: MockConfigEntry, aiocl
     assert hass.states.get("sensor.u7_lite_cpu_load").state == STATE_UNAVAILABLE
 
 
+async def test_started_steady(
+    hass: HomeAssistant, setup: MockConfigEntry, aioclient_mock: AiohttpClientMocker, freezer: FrozenDateTimeFactory
+) -> None:
+    """Die Laufzeit kommt nicht im Takt der Abfrage: der Start bleibt, bis er sich wirklich ändert (Neustart)."""
+    started = "sensor.dream_router_7_started"
+    before = hass.states.get(started).state
+    freezer.tick(timedelta(seconds=61))
+    setup.runtime_data._full_refresh = True
+    await _tick(hass, setup)
+    assert hass.states.get(started).state == before
+
+    devices = copy.deepcopy(fixture("devices"))
+    devices["data"][0]["uptime"] = 60
+    mock_router(aioclient_mock, devices=devices)
+    setup.runtime_data._full_refresh = True
+    await _tick(hass, setup)
+    rebooted = (dt_util.utcnow() - timedelta(seconds=60)).replace(second=0, microsecond=0)
+    assert hass.states.get(started).state == rebooted.isoformat()
+
+
 # --- Diagnose -------------------------------------------------------------------------------------------------------
 
 
