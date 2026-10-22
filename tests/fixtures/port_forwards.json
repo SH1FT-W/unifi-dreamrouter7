@@ -1,0 +1,16 @@
+{
+ "meta": {
+  "rc": "ok"
+ },
+ "data": [
+  {
+   "_id": "pf1",
+   "name": "Example Forward",
+   "enabled": true,
+   "fwd": "192.0.2.60",
+   "fwd_port": "8080",
+   "dst_port": "80",
+   "proto": "tcp"
+  }
+ ]
+}

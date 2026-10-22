@@ -1,0 +1,380 @@
+{
+ "meta": {
+  "rc": "ok"
+ },
+ "data": [
+  {
+   "_id": "gw0000000000000000000001",
+   "mac": "aa:bb:cc:00:00:01",
+   "name": "Dream Router 7",
+   "model": "UDMA67A",
+   "shortname": "UDR7",
+   "type": "udm",
+   "version": "5.1.33.34087",
+   "displayable_version": "5.1.33",
+   "ip": "203.0.113.7",
+   "lan_ip": "192.0.2.1",
+   "state": 1,
+   "serial": "AABBCC000001",
+   "upgradable": false,
+   "uptime": 86400,
+   "system-stats": {
+    "cpu": "20.2",
+    "mem": "70.1",
+    "uptime": "86400"
+   },
+   "temperatures": [
+    {
+     "name": "CPU",
+     "type": "cpu",
+     "value": 68.4
+    }
+   ],
+   "led_override": "on",
+   "led_override_color": "#0000ff",
+   "led_override_color_brightness": 100,
+   "locating": false,
+   "num_sta": 12,
+   "total_used_power": 4.39,
+   "overheating": false,
+   "port_table": [
+    {
+     "port_idx": 1,
+     "name": "Port 1",
+     "media": "2.5GE",
+     "up": true,
+     "speed": 2500,
+     "enable": true,
+     "port_poe": true,
+     "poe_power": "4.39",
+     "is_uplink": false,
+     "network_name": "lan",
+     "rx_bytes-r": 1000.0,
+     "tx_bytes-r": 2000.0,
+     "portconf_id": "pc1",
+     "poe_mode": "auto"
+    },
+    {
+     "port_idx": 2,
+     "name": "Port 2",
+     "media": "2.5GE",
+     "up": true,
+     "speed": 100,
+     "enable": true,
+     "port_poe": false,
+     "poe_power": "0.00",
+     "is_uplink": false,
+     "network_name": "lan",
+     "rx_bytes-r": 1000.0,
+     "tx_bytes-r": 2000.0,
+     "portconf_id": "pc1"
+    },
+    {
+     "port_idx": 3,
+     "name": "Port 3",
+     "media": "2.5GE",
+     "up": false,
+     "speed": 0,
+     "enable": true,
+     "port_poe": false,
+     "poe_power": "0.00",
+     "is_uplink": false,
+     "network_name": "lan",
+     "rx_bytes-r": 1000.0,
+     "tx_bytes-r": 2000.0,
+     "portconf_id": "pc1"
+    },
+    {
+     "port_idx": 4,
+     "name": "Port 4",
+     "media": "2.5GE",
+     "up": true,
+     "speed": 2500,
+     "enable": true,
+     "port_poe": false,
+     "poe_power": "0.00",
+     "is_uplink": false,
+     "network_name": "lan",
+     "rx_bytes-r": 1000.0,
+     "tx_bytes-r": 2000.0,
+     "portconf_id": "pc1"
+    },
+    {
+     "port_idx": 5,
+     "name": "SFP+ 1",
+     "media": "SFP+",
+     "up": true,
+     "speed": 1000,
+     "enable": true,
+     "port_poe": false,
+     "poe_power": "0.00",
+     "is_uplink": false,
+     "network_name": "wan",
+     "rx_bytes-r": 1000.0,
+     "tx_bytes-r": 2000.0,
+     "portconf_id": "pc1"
+    }
+   ],
+   "port_overrides": [
+    {
+     "port_idx": 1,
+     "poe_mode": "auto",
+     "forward": "all",
+     "name": "Port 1"
+    },
+    {
+     "port_idx": 2,
+     "forward": "customize",
+     "excluded_networkconf_ids": [
+      "net2"
+     ],
+     "name": "Port 2"
+    }
+   ],
+   "radio_table": [
+    {
+     "name": "wifi0",
+     "radio": "ng",
+     "channel": 6,
+     "ht": 20,
+     "tx_power_mode": "high",
+     "tx_power": 6,
+     "min_rssi_enabled": false
+    },
+    {
+     "name": "wifi1",
+     "radio": "na",
+     "channel": 44,
+     "ht": 40,
+     "tx_power_mode": "high",
+     "tx_power": 6,
+     "min_rssi_enabled": false
+    },
+    {
+     "name": "wifi2",
+     "radio": "6e",
+     "channel": "auto",
+     "ht": 160,
+     "tx_power_mode": "auto",
+     "tx_power": 6,
+     "min_rssi_enabled": false
+    }
+   ],
+   "radio_table_stats": [
+    {
+     "name": "wifi0",
+     "radio": "ng",
+     "channel": 6,
+     "num_sta": 8,
+     "cu_total": 26,
+     "tx_power": 15,
+     "state": "RUN"
+    },
+    {
+     "name": "wifi1",
+     "radio": "na",
+     "channel": 44,
+     "num_sta": 4,
+     "cu_total": 2,
+     "tx_power": 16,
+     "state": "RUN"
+    },
+    {
+     "name": "wifi2",
+     "radio": "6e",
+     "channel": 37,
+     "num_sta": 0,
+     "cu_total": 1,
+     "tx_power": 17,
+     "state": "RUN"
+    }
+   ],
+   "wan1": {
+    "ifname": "eth4",
+    "name": "eth4",
+    "media": "SFP+",
+    "num_port": 1,
+    "speed": 1000,
+    "up": true,
+    "ip": "203.0.113.7",
+    "ipv6": [
+     "2001:db8:1::7",
+     "fe80::1"
+    ]
+   },
+   "wan2": {},
+   "last_wan_status": {
+    "WAN": "online"
+   },
+   "last_wan_interfaces": {
+    "WAN": {
+     "alive": true
+    }
+   },
+   "speedtest-status": {
+    "status_summary": 2,
+    "rundate": 1792600000,
+    "server": {
+     "provider": "Example Speed",
+     "city": "Example City",
+     "country": "Germany",
+     "provider_url": "https://speed.example"
+    }
+   },
+   "active_geo_info": {
+    "WAN": {
+     "isp_name": "Example ISP",
+     "isp_organization": "Example ISP",
+     "asn": 64500,
+     "city": "Example City",
+     "country_name": "Germany"
+    }
+   },
+   "sysid": 42618,
+   "hw_caps": 8
+  },
+  {
+   "_id": "ap0000000000000000000002",
+   "mac": "aa:bb:cc:00:00:02",
+   "name": "U7 Lite",
+   "model": "UAPA693",
+   "shortname": "G7LT",
+   "type": "uap",
+   "version": "8.7.11.19419",
+   "displayable_version": "8.7.11",
+   "ip": "192.0.2.25",
+   "state": 1,
+   "serial": "AABBCC000002",
+   "upgradable": true,
+   "upgrade_to_firmware": "8.7.20.19500",
+   "uptime": 3600,
+   "system-stats": {
+    "cpu": "1.1",
+    "mem": "80.7"
+   },
+   "led_override": "off",
+   "led_override_color": "#0000ff",
+   "led_override_color_brightness": 100,
+   "locating": false,
+   "num_sta": 5,
+   "port_table": [],
+   "radio_table": [
+    {
+     "name": "wifi0",
+     "radio": "ng",
+     "channel": "auto",
+     "ht": 20,
+     "tx_power_mode": "low",
+     "tx_power": 6,
+     "min_rssi_enabled": false
+    },
+    {
+     "name": "wifi1",
+     "radio": "na",
+     "channel": "auto",
+     "ht": 40,
+     "tx_power_mode": "custom",
+     "tx_power": 6,
+     "min_rssi_enabled": false
+    }
+   ],
+   "radio_table_stats": [
+    {
+     "name": "wifi0",
+     "radio": "ng",
+     "channel": 1,
+     "num_sta": 2,
+     "cu_total": 29,
+     "tx_power": 6,
+     "state": "RUN"
+    },
+    {
+     "name": "wifi1",
+     "radio": "na",
+     "channel": 40,
+     "num_sta": 3,
+     "cu_total": 3,
+     "tx_power": 6,
+     "state": "RUN"
+    }
+   ],
+   "sysid": 42643,
+   "hw_caps": 34816
+  },
+  {
+   "_id": "sw0000000000000000000003",
+   "mac": "aa:bb:cc:00:00:03",
+   "name": "USW Flex 2.5G",
+   "model": "USWED35",
+   "shortname": "USM25G5",
+   "type": "usw",
+   "version": "2.1.8.971",
+   "displayable_version": "2.1.8",
+   "ip": "192.0.2.124",
+   "state": 1,
+   "serial": "AABBCC000003",
+   "upgradable": false,
+   "uptime": 7200,
+   "system-stats": {
+    "cpu": "5.9",
+    "mem": "77.3"
+   },
+   "led_override": "on",
+   "led_override_color": "#0000ff",
+   "led_override_color_brightness": 100,
+   "locating": false,
+   "num_sta": 3,
+   "overheating": false,
+   "port_table": [
+    {
+     "port_idx": 1,
+     "name": "Port 1",
+     "media": "2P5GE",
+     "up": true,
+     "speed": 1000,
+     "enable": true,
+     "port_poe": false,
+     "poe_power": "0.00",
+     "is_uplink": false,
+     "network_name": "lan",
+     "rx_bytes-r": 1000.0,
+     "tx_bytes-r": 2000.0,
+     "portconf_id": "pc1"
+    },
+    {
+     "port_idx": 2,
+     "name": "Port 2",
+     "media": "2P5GE",
+     "up": false,
+     "speed": 0,
+     "enable": true,
+     "port_poe": false,
+     "poe_power": "0.00",
+     "is_uplink": false,
+     "network_name": "lan",
+     "rx_bytes-r": 1000.0,
+     "tx_bytes-r": 2000.0,
+     "portconf_id": "pc1"
+    },
+    {
+     "port_idx": 5,
+     "name": "Port 5",
+     "media": "2P5GE",
+     "up": true,
+     "speed": 2500,
+     "enable": true,
+     "port_poe": false,
+     "poe_power": "0.00",
+     "is_uplink": true,
+     "network_name": "lan",
+     "rx_bytes-r": 1000.0,
+     "tx_bytes-r": 2000.0,
+     "portconf_id": "pc1"
+    }
+   ],
+   "port_overrides": [],
+   "sysid": 60725,
+   "hw_caps": 2
+  }
+ ]
+}

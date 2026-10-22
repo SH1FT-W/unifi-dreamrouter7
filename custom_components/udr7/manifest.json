@@ -1,0 +1,146 @@
+{
+  "domain": "udr7",
+  "name": "UniFi Dream Router 7",
+  "codeowners": [
+    "@SH1FT-W"
+  ],
+  "config_flow": true,
+  "dhcp": [
+    {
+      "hostname": "unifi*",
+      "macaddress": "942A6F*"
+    },
+    {
+      "hostname": "unifi*",
+      "macaddress": "245A4C*"
+    },
+    {
+      "hostname": "unifi*",
+      "macaddress": "265A4C*"
+    },
+    {
+      "hostname": "unifi*",
+      "macaddress": "74ACB9*"
+    },
+    {
+      "hostname": "unifi*",
+      "macaddress": "784558*"
+    },
+    {
+      "hostname": "unifi*",
+      "macaddress": "E063DA*"
+    },
+    {
+      "hostname": "unifi*",
+      "macaddress": "68D79A*"
+    },
+    {
+      "hostname": "unifi*",
+      "macaddress": "18E829*"
+    },
+    {
+      "hostname": "unifi*",
+      "macaddress": "F09FC2*"
+    },
+    {
+      "hostname": "unifi*",
+      "macaddress": "802AA8*"
+    },
+    {
+      "hostname": "unifi*",
+      "macaddress": "B4FBE4*"
+    },
+    {
+      "hostname": "unifi*",
+      "macaddress": "1C6A1B*"
+    },
+    {
+      "hostname": "unifi*",
+      "macaddress": "6C63F8*"
+    },
+    {
+      "hostname": "unifi*",
+      "macaddress": "D8B370*"
+    },
+    {
+      "hostname": "unifi*",
+      "macaddress": "F4E2C6*"
+    },
+    {
+      "hostname": "unifi*",
+      "macaddress": "9C05D6*"
+    },
+    {
+      "hostname": "unifi*",
+      "macaddress": "0418D6*"
+    },
+    {
+      "hostname": "unifi*",
+      "macaddress": "24A43C*"
+    },
+    {
+      "hostname": "unifi*",
+      "macaddress": "44D9E7*"
+    },
+    {
+      "hostname": "unifi*",
+      "macaddress": "788A20*"
+    },
+    {
+      "hostname": "unifi*",
+      "macaddress": "AC8BA9*"
+    },
+    {
+      "hostname": "unifi*",
+      "macaddress": "D021F9*"
+    },
+    {
+      "hostname": "unifi*",
+      "macaddress": "E43883*"
+    },
+    {
+      "hostname": "unifi*",
+      "macaddress": "FCECDA*"
+    },
+    {
+      "hostname": "unifi*",
+      "macaddress": "602232*"
+    },
+    {
+      "hostname": "unifi*",
+      "macaddress": "0CEA14*"
+    },
+    {
+      "hostname": "unifi*",
+      "macaddress": "28704E*"
+    },
+    {
+      "hostname": "unifi*",
+      "macaddress": "58D61F*"
+    },
+    {
+      "hostname": "unifi*",
+      "macaddress": "70A741*"
+    },
+    {
+      "hostname": "unifi*",
+      "macaddress": "1C0B8B*"
+    },
+    {
+      "hostname": "unifi*",
+      "macaddress": "847848*"
+    },
+    {
+      "hostname": "unifi*",
+      "macaddress": "8C3066*"
+    }
+  ],
+  "documentation": "https://github.com/SH1FT-W/unifi-dreamrouter7",
+  "integration_type": "hub",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/SH1FT-W/unifi-dreamrouter7/issues",
+  "requirements": [
+    "segno==1.6.6"
+  ],
+  "version": "26.10.1"
+}

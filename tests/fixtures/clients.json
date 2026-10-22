@@ -1,0 +1,36 @@
+{
+ "meta": {
+  "rc": "ok"
+ },
+ "data": [
+  {
+   "mac": "aa:bb:cc:10:00:01",
+   "name": "Example Phone",
+   "hostname": "phone",
+   "ip": "192.0.2.50",
+   "is_wired": false,
+   "essid": "Example WiFi",
+   "signal": -59,
+   "ap_mac": "aa:bb:cc:00:00:02",
+   "last_seen": 1792671000,
+   "uptime": 600,
+   "rx_bytes-r": 1000.0,
+   "tx_bytes-r": 50000.0,
+   "network": "Home",
+   "blocked": false
+  },
+  {
+   "mac": "aa:bb:cc:10:00:02",
+   "name": "",
+   "hostname": "tv",
+   "ip": "192.0.2.51",
+   "is_wired": true,
+   "sw_mac": "aa:bb:cc:00:00:03",
+   "last_seen": 1792671000,
+   "uptime": 9000,
+   "wired-rx_bytes-r": 300.0,
+   "wired-tx_bytes-r": 900000.0,
+   "network": "Home"
+  }
+ ]
+}

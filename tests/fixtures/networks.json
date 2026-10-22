@@ -1,0 +1,26 @@
+{
+ "meta": {
+  "rc": "ok"
+ },
+ "data": [
+  {
+   "_id": "net1",
+   "name": "Home",
+   "purpose": "corporate",
+   "enabled": true
+  },
+  {
+   "_id": "vpn1",
+   "name": "WireGuard",
+   "purpose": "remote-user-vpn",
+   "vpn_type": "wireguard-server"
+  },
+  {
+   "_id": "vpn2",
+   "name": "Example VPN",
+   "purpose": "vpn-client",
+   "vpn_type": "wireguard-client",
+   "enabled": false
+  }
+ ]
+}

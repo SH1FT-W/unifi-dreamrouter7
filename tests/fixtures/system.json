@@ -1,0 +1,33 @@
+{
+ "name": "Dream Router 7",
+ "hardware": {
+  "shortname": "UDR7"
+ },
+ "firmware": {
+  "latest": {
+   "version": "v5.1.40+abc123"
+  }
+ },
+ "apps": {
+  "controllers": [
+   {
+    "name": "network",
+    "version": "10.6.106",
+    "updateAvailable": "10.7.3"
+   }
+  ]
+ },
+ "lcmSettings": {
+  "enabled": true,
+  "color": "0139FF",
+  "brightness": 50
+ },
+ "nightMode": {
+  "onMinute": 1260,
+  "offMinute": 480
+ },
+ "features": {
+  "hasBezel": false,
+  "hasLCM": true
+ }
+}

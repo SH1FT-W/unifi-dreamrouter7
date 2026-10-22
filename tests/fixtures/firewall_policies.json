@@ -1,0 +1,28 @@
+[
+ {
+  "_id": "fw1",
+  "name": "Allow Example",
+  "enabled": true,
+  "action": "ALLOW",
+  "predefined": false,
+  "protocol": "all",
+  "index": 10000,
+  "hits": 12
+ },
+ {
+  "_id": "fw2",
+  "name": "Block Example",
+  "enabled": false,
+  "action": "BLOCK",
+  "predefined": false,
+  "protocol": "tcp",
+  "index": 10001
+ },
+ {
+  "_id": "fw3",
+  "name": "Predefined",
+  "enabled": true,
+  "action": "ALLOW",
+  "predefined": true
+ }
+]

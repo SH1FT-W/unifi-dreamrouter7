@@ -1,0 +1,11 @@
+[
+ {
+  "_id": "oon1",
+  "name": "Internet block",
+  "enabled": true,
+  "target_type": "CLIENTS",
+  "secure": {
+   "enabled": true
+  }
+ }
+]

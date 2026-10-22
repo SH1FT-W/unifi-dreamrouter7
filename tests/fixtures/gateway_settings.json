@@ -1,0 +1,12 @@
+{
+ "meta": {
+  "rc": "ok"
+ },
+ "data": [
+  {
+   "_id": "set1",
+   "key": "usg",
+   "upnp_enabled": false
+  }
+ ]
+}

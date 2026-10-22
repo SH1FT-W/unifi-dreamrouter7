@@ -1,0 +1,57 @@
+{
+ "meta": {
+  "rc": "ok"
+ },
+ "data": [
+  {
+   "subsystem": "wlan",
+   "status": "ok",
+   "num_user": 10,
+   "num_guest": 1,
+   "num_ap": 2,
+   "rx_bytes-r": 92106,
+   "tx_bytes-r": 7870
+  },
+  {
+   "subsystem": "wan",
+   "status": "ok",
+   "gw_mac": "aa:bb:cc:00:00:01",
+   "wan_ip": "203.0.113.7",
+   "isp_name": "Example ISP",
+   "rx_bytes-r": 275426,
+   "tx_bytes-r": 663618,
+   "uptime_stats": {
+    "WAN": {
+     "availability": 100.0,
+     "latency_average": 7
+    }
+   }
+  },
+  {
+   "subsystem": "www",
+   "status": "ok",
+   "latency": 11,
+   "drops": 2,
+   "xput_down": 263.0,
+   "xput_up": 44.0,
+   "speedtest_ping": 9,
+   "speedtest_lastrun": 1792600000,
+   "speedtest_status": "Idle"
+  },
+  {
+   "subsystem": "lan",
+   "status": "ok",
+   "num_user": 2,
+   "num_guest": 0,
+   "num_sw": 2,
+   "rx_bytes-r": 7320,
+   "tx_bytes-r": 6862
+  },
+  {
+   "subsystem": "vpn",
+   "status": "ok",
+   "remote_user_enabled": true,
+   "remote_user_num_active": 1
+  }
+ ]
+}

@@ -1,0 +1,296 @@
+{
+  "entity": {
+    "sensor": {
+      "wlan_upload": {
+        "default": "mdi:wifi-arrow-up"
+      },
+      "wlan_download": {
+        "default": "mdi:wifi-arrow-down"
+      },
+      "lan_upload": {
+        "default": "mdi:upload-network"
+      },
+      "lan_download": {
+        "default": "mdi:download-network"
+      },
+      "wan_download": {
+        "default": "mdi:download"
+      },
+      "wan_upload": {
+        "default": "mdi:upload"
+      },
+      "clients": {
+        "default": "mdi:devices"
+      },
+      "wlan_clients": {
+        "default": "mdi:wifi"
+      },
+      "lan_clients": {
+        "default": "mdi:ethernet"
+      },
+      "guest_clients": {
+        "default": "mdi:account-multiple"
+      },
+      "vpn_clients": {
+        "default": "mdi:vpn"
+      },
+      "internet_latency": {
+        "default": "mdi:timer-outline"
+      },
+      "internet_drops": {
+        "default": "mdi:lan-disconnect"
+      },
+      "wan_availability": {
+        "default": "mdi:web-check"
+      },
+      "speedtest_download": {
+        "default": "mdi:speedometer"
+      },
+      "speedtest_upload": {
+        "default": "mdi:speedometer"
+      },
+      "speedtest_ping": {
+        "default": "mdi:timer-outline"
+      },
+      "speedtest_last": {
+        "default": "mdi:clock-check-outline"
+      },
+      "isp": {
+        "default": "mdi:domain"
+      },
+      "wan_ip": {
+        "default": "mdi:ip-network"
+      },
+      "wan_ipv6": {
+        "default": "mdi:ip-network"
+      },
+      "active_wan": {
+        "default": "mdi:wan"
+      },
+      "speedtest_server": {
+        "default": "mdi:server-network"
+      },
+      "network_version": {
+        "default": "mdi:information-outline"
+      },
+      "download_rating": {
+        "default": "mdi:scale-balance"
+      },
+      "upload_rating": {
+        "default": "mdi:scale-balance"
+      },
+      "cpu_load": {
+        "default": "mdi:cpu-64-bit"
+      },
+      "memory_usage": {
+        "default": "mdi:memory"
+      },
+      "connected_clients": {
+        "default": "mdi:devices"
+      },
+      "poe_power": {
+        "default": "mdi:power-plug"
+      },
+      "radio_clients": {
+        "default": "mdi:access-point"
+      },
+      "radio_channel": {
+        "default": "mdi:radio-tower"
+      },
+      "radio_utilization": {
+        "default": "mdi:chart-donut"
+      },
+      "radio_tx_power": {
+        "default": "mdi:signal"
+      },
+      "port_link_speed": {
+        "default": "mdi:ethernet"
+      },
+      "port_receive": {
+        "default": "mdi:download-network"
+      },
+      "port_transmit": {
+        "default": "mdi:upload-network"
+      },
+      "port_poe_power": {
+        "default": "mdi:power-plug"
+      },
+      "client_download": {
+        "default": "mdi:download"
+      },
+      "client_upload": {
+        "default": "mdi:upload"
+      },
+      "client_signal": {
+        "default": "mdi:wifi-strength-3"
+      },
+      "client_ip": {
+        "default": "mdi:ip"
+      },
+      "client_connected_since": {
+        "default": "mdi:clock-start"
+      },
+      "critical_events": {
+        "default": "mdi:alert"
+      }
+    },
+    "binary_sensor": {
+      "internet": {
+        "default": "mdi:web-off",
+        "state": {
+          "on": "mdi:web"
+        }
+      },
+      "wlan_problem": {
+        "default": "mdi:wifi-alert"
+      },
+      "lan_problem": {
+        "default": "mdi:lan-disconnect"
+      },
+      "speedtest_running": {
+        "default": "mdi:speedometer"
+      },
+      "online": {
+        "default": "mdi:lan-disconnect",
+        "state": {
+          "on": "mdi:lan-connect"
+        }
+      },
+      "overheating": {
+        "default": "mdi:thermometer-alert"
+      }
+    },
+    "button": {
+      "speedtest": {
+        "default": "mdi:speedometer"
+      },
+      "client_reconnect": {
+        "default": "mdi:wifi-refresh"
+      },
+      "port_power_cycle": {
+        "default": "mdi:power-cycle"
+      }
+    },
+    "switch": {
+      "auto_speedtest": {
+        "default": "mdi:timer-play-outline"
+      },
+      "upnp": {
+        "default": "mdi:router-network"
+      },
+      "wlan": {
+        "default": "mdi:wifi-off",
+        "state": {
+          "on": "mdi:wifi"
+        }
+      },
+      "firewall_policy": {
+        "default": "mdi:wall-fire",
+        "state": {
+          "off": "mdi:wall"
+        }
+      },
+      "traffic_rule": {
+        "default": "mdi:traffic-light"
+      },
+      "traffic_route": {
+        "default": "mdi:routes"
+      },
+      "port_forward": {
+        "default": "mdi:router-network"
+      },
+      "content_filter": {
+        "default": "mdi:filter"
+      },
+      "client_policy": {
+        "default": "mdi:shield-account"
+      },
+      "vpn_server": {
+        "default": "mdi:vpn"
+      },
+      "vpn_client": {
+        "default": "mdi:vpn"
+      },
+      "qos_rule": {
+        "default": "mdi:speedometer-slow"
+      },
+      "locate": {
+        "default": "mdi:crosshairs-gps"
+      },
+      "port_enabled": {
+        "default": "mdi:ethernet-off",
+        "state": {
+          "on": "mdi:ethernet"
+        }
+      },
+      "port_poe": {
+        "default": "mdi:power-plug"
+      },
+      "client_allowed": {
+        "default": "mdi:web-cancel",
+        "state": {
+          "on": "mdi:web"
+        }
+      }
+    },
+    "light": {
+      "led": {
+        "default": "mdi:led-on"
+      },
+      "display": {
+        "default": "mdi:monitor"
+      }
+    },
+    "select": {
+      "tx_power": {
+        "default": "mdi:signal",
+        "state": {
+          "auto": "mdi:signal-variant",
+          "high": "mdi:signal-cellular-3",
+          "medium": "mdi:signal-cellular-2",
+          "low": "mdi:signal-cellular-1"
+        }
+      }
+    },
+    "text": {
+      "wlan_password": {
+        "default": "mdi:form-textbox-password"
+      }
+    },
+    "image": {
+      "wlan_qr_code": {
+        "default": "mdi:qrcode"
+      }
+    },
+    "update": {
+      "network_app": {
+        "default": "mdi:package-up"
+      }
+    },
+    "time": {
+      "night_mode_start": {
+        "default": "mdi:weather-night"
+      },
+      "night_mode_end": {
+        "default": "mdi:weather-sunny"
+      }
+    }
+  },
+  "services": {
+    "block_client": {
+      "service": "mdi:web-cancel"
+    },
+    "unblock_client": {
+      "service": "mdi:web"
+    },
+    "reconnect_client": {
+      "service": "mdi:wifi-refresh"
+    },
+    "authorize_guest": {
+      "service": "mdi:account-check"
+    },
+    "unauthorize_guest": {
+      "service": "mdi:account-cancel"
+    }
+  }
+}

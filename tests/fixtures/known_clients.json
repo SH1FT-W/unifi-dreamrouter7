@@ -1,0 +1,29 @@
+{
+ "meta": {
+  "rc": "ok"
+ },
+ "data": [
+  {
+   "_id": "u1",
+   "mac": "aa:bb:cc:10:00:01",
+   "name": "Example Phone",
+   "hostname": "phone",
+   "last_seen": 1792671000,
+   "blocked": false
+  },
+  {
+   "_id": "u2",
+   "mac": "aa:bb:cc:10:00:02",
+   "hostname": "tv",
+   "last_seen": 1792671000,
+   "blocked": false
+  },
+  {
+   "_id": "u3",
+   "mac": "aa:bb:cc:10:00:03",
+   "name": "Old Tablet",
+   "last_seen": 1790000000,
+   "blocked": true
+  }
+ ]
+}

@@ -1,0 +1,10 @@
+[
+ {
+  "id": "ev1",
+  "key": "WAN_DOWN",
+  "category": "INTERNET_AND_WAN",
+  "severity": "HIGH",
+  "timestamp": 1792670000000,
+  "message_raw": "Internet connection lost"
+ }
+]

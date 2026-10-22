@@ -1,0 +1,120 @@
+# Integration Quality Scale, selbst geprüft (keine Core-Integration, die Stufe ist nicht offiziell).
+# Regeln: https://developers.home-assistant.io/docs/core/integration-quality-scale/rules
+rules:
+  # Bronze
+  action-setup:
+    status: done
+    comment: Client-Aktionen (sperren, freigeben, neu verbinden, Gast) werden in async_setup registriert.
+  appropriate-polling:
+    status: done
+    comment: >-
+      stat/health alle 15 s, Geräte und Clients alle 30 s, Einstellungen jede Minute, Versionen alle 5 Minuten;
+      nach einem Befehl sofort alles.
+  brands: done
+  common-modules:
+    status: done
+    comment: DataUpdateCoordinator in coordinator.py, gemeinsame Basis in entity.py.
+  config-flow-test-coverage: done
+  config-flow: done
+  dependency-transparency:
+    status: done
+    comment: Eigener Client in api.py auf aiohttp; einzige Abhängigkeit segno (QR-Code, auf PyPI, CI-veröffentlicht).
+  docs-actions: done
+  docs-high-level-description: done
+  docs-installation-instructions: done
+  docs-removal-instructions: done
+  entity-event-setup:
+    status: exempt
+    comment: Keine Ereignis-Abos, nur der Coordinator.
+  entity-unique-id: done
+  has-entity-name: done
+  runtime-data: done
+  test-before-configure:
+    status: done
+    comment: Der Flow meldet sich an und liest die Geräte; ohne Gateway bricht er mit Hinweis ab.
+  test-before-setup:
+    status: done
+    comment: >-
+      async_config_entry_first_refresh. Nur eine abgelehnte Anmeldung startet Reauth; 403 (fehlende Rechte),
+      401 trotz frischer Anmeldung und Weiterleitungen beim Hochfahren gelten als „nicht verfügbar“.
+  unique-config-entry:
+    status: done
+    comment: Eindeutig über die MAC-Adresse des Gateways.
+
+  # Silver
+  action-exceptions:
+    status: done
+    comment: >-
+      Befehle und Aktionen melden übersetzte HomeAssistantError (command_failed, auth_failed, no_permission,
+      cert_changed, item_missing) bzw. ServiceValidationError (invalid_mac, entry_not_found).
+  config-entry-unloading: done
+  docs-configuration-parameters: done
+  docs-installation-parameters: done
+  entity-unavailable: done
+  integration-owner: done
+  log-when-unavailable:
+    status: done
+    comment: Der Coordinator loggt Ausfall und Rückkehr je einmal.
+  parallel-updates: done
+  reauthentication-flow: done
+  test-coverage: done
+
+  # Gold
+  devices:
+    status: done
+    comment: >-
+      Der Dream Router ist das Hauptgerät, Access Points und Switches hängen darunter (via_device), ausgewählte
+      Clients bekommen ein Gerät über ihre MAC.
+  diagnostics: done
+  discovery-update-info:
+    status: exempt
+    comment: >-
+      Der Router ist das Gateway mit fester Adresse und hat eine je Netz; eine gefundene Adresse überschreibt die
+      eingerichtete deshalb nicht.
+  discovery:
+    status: done
+    comment: >-
+      DHCP-Matcher im Manifest (Ubiquiti-MAC-Präfixe mit Hostname „unifi*“): HAs DHCP-Erkennung findet den Router in
+      der ARP-Tabelle (Rückwärts-DNS des Routers liefert „unifi.localdomain“); /api/system bestätigt ohne Anmeldung
+      Modell und MAC. Der Router selbst kündigt sich weder per mDNS noch per SSDP an.
+  docs-data-update: done
+  docs-examples: done
+  docs-known-limitations: done
+  docs-supported-devices: done
+  docs-supported-functions: done
+  docs-troubleshooting: done
+  docs-use-cases: done
+  dynamic-devices:
+    status: done
+    comment: Neue UniFi-Geräte, WLANs und Regeln bekommen zur Laufzeit Entitäten.
+  entity-category: done
+  entity-device-class: done
+  entity-disabled-by-default:
+    status: done
+    comment: >-
+      Port-Durchsatz, Sendeleistung in dBm, verbunden seit, Network-Version, WLAN-Passwort und WLAN-QR-Code.
+  entity-translations: done
+  exception-translations: done
+  icon-translations: done
+  reconfiguration-flow: done
+  repair-issues:
+    status: done
+    comment: >-
+      Zeigt der Router ein anderes Zertifikat als das gemerkte, erscheint eine Reparatur mit altem und neuem
+      Fingerabdruck; nach Bestätigung gilt das neue (repairs.py).
+  stale-devices:
+    status: done
+    comment: >-
+      Abgebaute UniFi-Geräte und nicht mehr ausgewählte Clients lassen sich entfernen
+      (async_remove_config_entry_device).
+
+  # Platinum
+  async-dependency:
+    status: done
+    comment: Eigener asynchroner Client (api.py) auf aiohttp.
+  inject-websession:
+    status: done
+    comment: >-
+      Nutzt HAs Session (async_get_clientsession); wegen des selbstsignierten Zertifikats standardmäßig ohne
+      CA-Prüfung, dafür je Anfrage nur mit dem gemerkten Fingerabdruck (aiohttp.Fingerprint).
+  strict-typing: done

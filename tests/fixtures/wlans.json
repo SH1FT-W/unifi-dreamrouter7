@@ -1,0 +1,26 @@
+{
+ "meta": {
+  "rc": "ok"
+ },
+ "data": [
+  {
+   "_id": "wlan1",
+   "name": "Example WiFi",
+   "enabled": true,
+   "security": "wpapsk",
+   "x_passphrase": "example-pass",
+   "hide_ssid": false,
+   "is_guest": false,
+   "networkconf_id": "net1"
+  },
+  {
+   "_id": "wlan2",
+   "name": "Example Guest",
+   "enabled": false,
+   "security": "open",
+   "hide_ssid": false,
+   "is_guest": true,
+   "networkconf_id": "net2"
+  }
+ ]
+}

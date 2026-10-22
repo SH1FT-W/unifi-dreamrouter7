@@ -1,0 +1,10 @@
+[
+ {
+  "_id": "cf1",
+  "name": "Ad blocker",
+  "enabled": true,
+  "categories": [
+   "ADVERTISEMENT"
+  ]
+ }
+]

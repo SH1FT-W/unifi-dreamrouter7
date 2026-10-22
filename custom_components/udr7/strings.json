@@ -1,0 +1,507 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "UniFi Dream Router 7",
+        "description": "Connects a UniFi Dream Router 7 and the UniFi devices adopted to it. Use a local UniFi OS account (not a UI account with two-factor login) with admin rights in UniFi Network.",
+        "data": {
+          "host": "Host",
+          "username": "Username",
+          "password": "Password",
+          "site": "Site",
+          "verify_ssl": "Verify certificate"
+        },
+        "data_description": {
+          "host": "IP address or hostname of the Dream Router.",
+          "username": "Local UniFi OS account with admin rights in UniFi Network.",
+          "site": "UniFi Network site, \"default\" unless you renamed it.",
+          "verify_ssl": "Off by default: UniFi OS uses a self-signed certificate, so the integration remembers the certificate the router shows at setup and accepts only that one afterwards. Turn on only if the router has a certificate from a trusted authority."
+        }
+      },
+      "reauth_confirm": {
+        "title": "UniFi Dream Router 7: new login",
+        "description": "The router rejected the login for {name}. Enter the username and password again.",
+        "data": {
+          "username": "Username",
+          "password": "Password"
+        }
+      },
+      "discovery_confirm": {
+        "title": "UniFi Dream Router 7",
+        "description": "Found {name} at {host}. Enter a local UniFi OS account with admin rights in UniFi Network (not a UI account with two-factor login).",
+        "data": {
+          "username": "Username",
+          "password": "Password",
+          "verify_ssl": "Verify certificate"
+        },
+        "data_description": {
+          "verify_ssl": "Off by default: UniFi OS uses a self-signed certificate, so the integration remembers the certificate the router shows at setup and accepts only that one afterwards. Turn on only if the router has a certificate from a trusted authority."
+        }
+      },
+      "reconfigure": {
+        "title": "UniFi Dream Router 7",
+        "data": {
+          "host": "Host",
+          "username": "Username",
+          "password": "Password",
+          "site": "Site"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "The router does not answer or the certificate was rejected. Check the address and the certificate option.",
+      "invalid_auth": "Username or password is wrong.",
+      "unknown_site": "UniFi Network does not know this site.",
+      "no_permission": "Login works, but the account has no access to UniFi Network.",
+      "cert_changed": "The router shows a different certificate than at setup. Check the repair notice under Settings → Repairs.",
+      "no_gateway": "UniFi Network on this console has no gateway.",
+      "wrong_device": "This address belongs to a different router.",
+      "unknown": "Unexpected error."
+    },
+    "abort": {
+      "already_configured": "This router is already set up.",
+      "reauth_successful": "Login updated.",
+      "reconfigure_successful": "Settings saved.",
+      "wrong_device": "This address belongs to a different router.",
+      "not_udr": "This device is not a UniFi Dream Router."
+    },
+    "flow_title": "{name}"
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "UniFi Dream Router 7 options",
+        "data": {
+          "tracked_clients": "Clients",
+          "away_seconds": "Away after",
+          "speedtest_minutes": "Automatic speed test every",
+          "expected_download": "Contracted download",
+          "expected_upload": "Contracted upload",
+          "tolerance": "Tolerance",
+          "verify_ssl": "Verify certificate"
+        },
+        "data_description": {
+          "tracked_clients": "Each selected client gets presence, internet access (block), reconnect and its throughput, on its own device.",
+          "away_seconds": "Phones sleep on WiFi: a client counts as home this long after its last contact.",
+          "speedtest_minutes": "Interval of the automatic speed test switch.",
+          "expected_download": "Speed you pay for, 0 = no rating.",
+          "expected_upload": "Speed you pay for, 0 = no rating.",
+          "tolerance": "Deviation that still counts as expected.",
+          "verify_ssl": "Off by default: UniFi OS uses a self-signed certificate, so the integration remembers the certificate the router shows at setup and accepts only that one afterwards. Turn on only if the router has a certificate from a trusted authority."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "The router does not answer or the certificate was rejected. Check the address and the certificate option.",
+      "invalid_auth": "Username or password is wrong.",
+      "unknown_site": "UniFi Network does not know this site.",
+      "no_permission": "Login works, but the account has no access to UniFi Network.",
+      "cert_changed": "The router shows a different certificate than at setup. Check the repair notice under Settings → Repairs.",
+      "no_gateway": "UniFi Network on this console has no gateway.",
+      "unknown": "Unexpected error."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "wlan_upload": {
+        "name": "WiFi upload"
+      },
+      "wlan_download": {
+        "name": "WiFi download"
+      },
+      "lan_upload": {
+        "name": "LAN upload"
+      },
+      "lan_download": {
+        "name": "LAN download"
+      },
+      "wan_download": {
+        "name": "Internet download"
+      },
+      "wan_upload": {
+        "name": "Internet upload"
+      },
+      "clients": {
+        "name": "Clients"
+      },
+      "wlan_clients": {
+        "name": "WiFi clients"
+      },
+      "lan_clients": {
+        "name": "LAN clients"
+      },
+      "guest_clients": {
+        "name": "Guests"
+      },
+      "vpn_clients": {
+        "name": "VPN clients"
+      },
+      "internet_latency": {
+        "name": "Internet latency"
+      },
+      "internet_drops": {
+        "name": "Internet drops"
+      },
+      "wan_availability": {
+        "name": "Internet availability"
+      },
+      "speedtest_download": {
+        "name": "Speed test download"
+      },
+      "speedtest_upload": {
+        "name": "Speed test upload"
+      },
+      "speedtest_ping": {
+        "name": "Speed test ping"
+      },
+      "speedtest_last": {
+        "name": "Last speed test"
+      },
+      "isp": {
+        "name": "Internet provider"
+      },
+      "wan_ip": {
+        "name": "Public IPv4"
+      },
+      "wan_ipv6": {
+        "name": "Public IPv6"
+      },
+      "active_wan": {
+        "name": "Active WAN"
+      },
+      "speedtest_server": {
+        "name": "Speed test server"
+      },
+      "critical_events": {
+        "name": "Critical events (24 h)"
+      },
+      "network_version": {
+        "name": "Network version"
+      },
+      "download_rating": {
+        "name": "Download vs. contract",
+        "state": {
+          "as_expected": "As expected",
+          "faster": "Faster",
+          "slower": "Slower"
+        }
+      },
+      "upload_rating": {
+        "name": "Upload vs. contract",
+        "state": {
+          "as_expected": "As expected",
+          "faster": "Faster",
+          "slower": "Slower"
+        }
+      },
+      "cpu_load": {
+        "name": "CPU load"
+      },
+      "memory_usage": {
+        "name": "Memory usage"
+      },
+      "cpu_temperature": {
+        "name": "CPU temperature"
+      },
+      "started": {
+        "name": "Started"
+      },
+      "connected_clients": {
+        "name": "Connected clients"
+      },
+      "poe_power": {
+        "name": "PoE power"
+      },
+      "radio_clients": {
+        "name": "{band} clients"
+      },
+      "radio_channel": {
+        "name": "{band} channel"
+      },
+      "radio_utilization": {
+        "name": "{band} channel utilization"
+      },
+      "radio_tx_power": {
+        "name": "{band} transmit power"
+      },
+      "port_link_speed": {
+        "name": "{port} link speed"
+      },
+      "port_receive": {
+        "name": "{port} receive"
+      },
+      "port_transmit": {
+        "name": "{port} transmit"
+      },
+      "port_poe_power": {
+        "name": "{port} PoE power"
+      },
+      "client_download": {
+        "name": "Download"
+      },
+      "client_upload": {
+        "name": "Upload"
+      },
+      "client_signal": {
+        "name": "WiFi signal"
+      },
+      "client_ip": {
+        "name": "IP address"
+      },
+      "client_connected_since": {
+        "name": "Connected since"
+      }
+    },
+    "binary_sensor": {
+      "internet": {
+        "name": "Internet"
+      },
+      "wlan_problem": {
+        "name": "WiFi problem"
+      },
+      "lan_problem": {
+        "name": "LAN problem"
+      },
+      "wan_up": {
+        "name": "WAN connected"
+      },
+      "speedtest_running": {
+        "name": "Speed test running"
+      },
+      "online": {
+        "name": "Online"
+      },
+      "overheating": {
+        "name": "Overheating"
+      }
+    },
+    "button": {
+      "speedtest": {
+        "name": "Run speed test"
+      },
+      "restart": {
+        "name": "Restart"
+      },
+      "port_power_cycle": {
+        "name": "{port} power cycle"
+      },
+      "client_reconnect": {
+        "name": "Reconnect"
+      }
+    },
+    "switch": {
+      "auto_speedtest": {
+        "name": "Automatic speed test"
+      },
+      "upnp": {
+        "name": "UPnP"
+      },
+      "wlan": {
+        "name": "WiFi {name}"
+      },
+      "firewall_policy": {
+        "name": "Firewall {name}"
+      },
+      "traffic_rule": {
+        "name": "Traffic rule {name}"
+      },
+      "traffic_route": {
+        "name": "Route {name}"
+      },
+      "port_forward": {
+        "name": "Port forward {name}"
+      },
+      "content_filter": {
+        "name": "Content filter {name}"
+      },
+      "client_policy": {
+        "name": "Policy {name}"
+      },
+      "vpn_server": {
+        "name": "VPN server {name}"
+      },
+      "vpn_client": {
+        "name": "VPN client {name}"
+      },
+      "qos_rule": {
+        "name": "QoS {name}"
+      },
+      "locate": {
+        "name": "Locate"
+      },
+      "port_enabled": {
+        "name": "{port}"
+      },
+      "port_poe": {
+        "name": "{port} PoE"
+      },
+      "client_allowed": {
+        "name": "Internet access"
+      }
+    },
+    "light": {
+      "led": {
+        "name": "Status LED"
+      },
+      "display": {
+        "name": "Display"
+      }
+    },
+    "time": {
+      "night_mode_start": {
+        "name": "Night mode start"
+      },
+      "night_mode_end": {
+        "name": "Night mode end"
+      }
+    },
+    "select": {
+      "tx_power": {
+        "name": "{band} transmit power",
+        "state": {
+          "auto": "Auto",
+          "high": "High",
+          "medium": "Medium",
+          "low": "Low"
+        }
+      }
+    },
+    "text": {
+      "wlan_password": {
+        "name": "WiFi {name} password"
+      }
+    },
+    "image": {
+      "wlan_qr_code": {
+        "name": "WiFi {name} QR code"
+      }
+    },
+    "update": {
+      "firmware": {
+        "name": "Firmware"
+      },
+      "network_app": {
+        "name": "UniFi Network"
+      }
+    }
+  },
+  "exceptions": {
+    "auth_failed": {
+      "message": "The router rejected the login. Enter the password again under Settings → Devices & services."
+    },
+    "no_permission": {
+      "message": "The account has no admin rights in UniFi Network for this action."
+    },
+    "cert_changed": {
+      "message": "The router shows a different certificate than at setup. Check the repair notice under Settings → Repairs."
+    },
+    "command_failed": {
+      "message": "The router did not accept the command: {error}"
+    },
+    "unreachable": {
+      "message": "The router is not reachable: {error}"
+    },
+    "item_missing": {
+      "message": "This item no longer exists on the router."
+    },
+    "entry_not_found": {
+      "message": "Choose the Dream Router (config entry) this action is for."
+    },
+    "invalid_mac": {
+      "message": "This is not a valid MAC address."
+    }
+  },
+  "issues": {
+    "cert_changed": {
+      "title": "{name}: certificate changed",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "{name}: accept new certificate?",
+            "description": "The router shows a different certificate than at setup. That is normal after a reset or a new UniFi OS install, but could also mean another device answers at this address.\n\nRemembered: {old}\nNow: {new}\n\nAccept the new certificate only if you know why it changed."
+          }
+        },
+        "abort": {
+          "entry_removed": "The entry no longer exists.",
+          "cannot_connect": "The router does not answer."
+        }
+      }
+    }
+  },
+  "services": {
+    "block_client": {
+      "name": "Block client",
+      "description": "Blocks a client from the network, like Block in UniFi Network.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Dream Router",
+          "description": "Only needed with more than one Dream Router."
+        },
+        "mac": {
+          "name": "MAC address",
+          "description": "MAC address of the client."
+        }
+      }
+    },
+    "unblock_client": {
+      "name": "Unblock client",
+      "description": "Lifts the block of a client.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Dream Router",
+          "description": "Only needed with more than one Dream Router."
+        },
+        "mac": {
+          "name": "MAC address",
+          "description": "MAC address of the client."
+        }
+      }
+    },
+    "reconnect_client": {
+      "name": "Reconnect client",
+      "description": "Disconnects a WiFi client; it connects again right away.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Dream Router",
+          "description": "Only needed with more than one Dream Router."
+        },
+        "mac": {
+          "name": "MAC address",
+          "description": "MAC address of the client."
+        }
+      }
+    },
+    "authorize_guest": {
+      "name": "Authorize guest",
+      "description": "Lets a guest client through the guest portal.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Dream Router",
+          "description": "Only needed with more than one Dream Router."
+        },
+        "mac": {
+          "name": "MAC address",
+          "description": "MAC address of the client."
+        },
+        "minutes": {
+          "name": "Minutes",
+          "description": "How long the guest stays authorized; empty = portal default."
+        }
+      }
+    },
+    "unauthorize_guest": {
+      "name": "Revoke guest",
+      "description": "Ends the authorization of a guest client.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Dream Router",
+          "description": "Only needed with more than one Dream Router."
+        },
+        "mac": {
+          "name": "MAC address",
+          "description": "MAC address of the client."
+        }
+      }
+    }
+  }
+}
