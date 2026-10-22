@@ -2,8 +2,8 @@
 
 <img src="docs/images/readme-title.webp" alt="UniFi Dream Router 7 for Home Assistant: your network, fully local. A Dream Router 7 on a desk next to a monitor with a network dashboard, in warm afternoon light (illustrated scene)." />
 
-<p>Your Dream Router 7, its WiFi, firewall, clients and every UniFi device behind it.<br/>
-Local, no cloud, more control than the official UniFi integration.</p>
+<p>Your Dream Router 7 and every UniFi device behind it in Home Assistant.<br/>
+WiFi, firewall, ports and clients, local, no cloud.</p>
 
 [![Version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FSH1FT-W%2Funifi-dreamrouter7%2Fmain%2Fcustom_components%2Fudr7%2Fmanifest.json&query=%24.version&label=version&style=flat-square&color=006FFF&labelColor=0B1526)](https://github.com/SH1FT-W/unifi-dreamrouter7/releases/latest)
 [![Home Assistant](https://img.shields.io/badge/Home%20Assistant-2026.9%2B-006FFF?style=flat-square&labelColor=0B1526&logo=homeassistant&logoColor=white)](https://www.home-assistant.io)
@@ -12,52 +12,118 @@ Local, no cloud, more control than the official UniFi integration.</p>
 [![Quality scale](https://img.shields.io/badge/quality%20scale-platinum%20(self--assessed)-006FFF?style=flat-square&labelColor=0B1526)](custom_components/udr7/quality_scale.yaml)
 [![License](https://img.shields.io/badge/license-Apache%202.0-006FFF?style=flat-square&labelColor=0B1526)](LICENSE)
 
+<p><a href="https://sh1ft-w.github.io/unifi-dreamrouter7"><b>Website</b></a> &nbsp;·&nbsp; <a href="#features">Features</a> &nbsp;·&nbsp; <a href="#entities">Entities</a> &nbsp;·&nbsp; <a href="#installation">Install</a> &nbsp;·&nbsp; <a href="#security">Security</a> &nbsp;·&nbsp; <a href="#troubleshooting">Troubleshooting</a> &nbsp;·&nbsp; <a href="CHANGELOG.md">Changelog</a></p>
+
 </div>
+
+<br/>
 
 UniFi Dream Router 7 brings a **UniFi Dream Router 7** and the access points and switches adopted to it into Home Assistant. It shows what the UniFi Network dashboard shows (throughput, clients, internet quality, speed tests) and lets you switch what you would otherwise switch in the UniFi Network app: WiFi networks and their password, firewall rules, policies, content filters, VPN, ports and PoE, the status LED with color, transmit power, client blocking and more. It talks to UniFi OS on your own network, the same way the web interface does. No cloud account, nothing installed on the router.
 
 > [!NOTE]
 > UniFi Dream Router 7 is an independent project. It is not affiliated with, endorsed by or sponsored by Ubiquiti Inc. UniFi, UniFi OS, UniFi Network and Dream Router are trademarks of Ubiquiti Inc.
 
+<br/>
+
+<a id="features"></a>
 ## Features
 
-**Network, like the dashboard**
-- Throughput of WiFi, LAN and the internet connection, upload and download
-- Clients: total, WiFi, LAN, guests and VPN
-- Internet connected, latency, availability and drops, active WAN, public IPv4 and IPv6, internet provider
-- Speed test: download, upload, ping, last run and server, a button, an automatic speed test and a comparison with the speed you pay for
-- WiFi problem and LAN problem, critical events of the last 24 hours with the latest one
-
-**Control**
-- Every WiFi network: on/off, password (text entity), QR code (image entity, for a guest tablet)
-- Every firewall policy, traffic rule, traffic route, port forward, content filter (ad blocker), Policy Engine policy (for example an internet block for a group of clients), VPN server and VPN client: on/off
-- UPnP on/off
-- The router's display as a light (on/off and brightness; a color only on consoles with a bezel, not on the Dream Router 7) and the night mode start and end
-- Client actions for any client by MAC: block, unblock, reconnect, authorize and revoke a guest
-
-**Every UniFi device its own device** (the Dream Router itself, and each access point and switch under it)
-- CPU load, memory, CPU temperature, started, connected clients, online, overheating
-- Status LED as a light, with color and brightness only on devices with an LED ring (the Dream Router 7, U7 Lite and USW Flex 2.5G have none: on/off)
-- Per WiFi band: clients, channel, channel utilization, transmit power (select: auto, high, medium, low)
-- Per port: link speed, receive and transmit, port on/off, PoE on/off, PoE power and a PoE power cycle button
-- Restart, locate (LED blinks), firmware update with progress; the Dream Router's firmware is UniFi OS
-- The product picture of each device on its firmware update and online entities (Home Assistant shows the integration logo on every device page, so this is where the device's own picture appears)
-- UniFi Network app update
-
-**Clients you choose** (in the options) get a device of their own with presence (device tracker), internet access (block switch), reconnect, download, upload, WiFi signal and IP address.
-
-**Local and discovered:** talks only to the router on your network. Home Assistant finds the router on its own (it sees it as `unifi` in its network neighbourhood, within an hour after a restart at the latest) and shows it under Settings, Devices & services, Discovered.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/readme-cards-features-dark.png" />
+  <img src="docs/images/readme-cards-features-light.png" alt="Like the dashboard: throughput of WiFi, LAN and internet, clients, latency, availability, public IP, provider and critical events, as in UniFi Network. Every WiFi network: on and off, the password as a text field and a QR code to scan, for example on a tablet for guests. Firewall and policies: every firewall policy, traffic rule and route, port forward, content filter, Policy Engine policy and VPN server as a switch. Ports and PoE: link speed and throughput per port, ports on and off with their settings restored, PoE on and off and a power cycle. Every UniFi device its own: access points and switches sit under the router: clients per band, channel, utilization, transmit power, LED, restart, firmware. Clients you choose: pick the phones that matter: presence, internet access, reconnect, download, upload and WiFi signal for each. Speed tests: download, upload and ping, a button, an automatic test on your interval and a comparison with the speed you pay for. Display and night mode: the router's display with its brightness, every status LED and the night mode times, plus firmware and UniFi Network updates." />
+</picture>
 
 ### What the official UniFi integration does not have
 
 WiFi password as text, VPN servers and clients, content filters, UPnP, transmit power, network throughput and client counts, internet quality, speed test with automation and contract comparison, critical events, the display and night mode, guest authorization, the UniFi Network app update, locate, and a device tree with the access points and switches under the router. Client entities only for the clients you pick, instead of one for every client that ever connected.
 
+<a id="entities"></a>
 ## Entities
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/readme-cards-entities-dark.png" />
+  <img src="docs/images/readme-cards-entities-light.png" alt="Network: wan_download, wan_upload, wifi_rx, wifi_tx, lan_rx, lan_tx, clients, internet_latency, wan_availability and critical_events. Internet and speed test: speedtest_download, speedtest_upload, speedtest_ping, isp, wan_ip, wan_ipv6, active_wan and the auto speed test switch. Per device: cpu_load, memory_usage, cpu_temperature, connected_clients, online, firmware, restart, locate and status_led. Per band and port: 2_4_ghz_clients, channel, utilization, transmit_power as a select, port_1, port_1_poe, link speed and PoE power. Switches: wifi_*, firewall_*, traffic_rule_*, route_*, port_forward_*, content_filter_*, policy_*, vpn_* and upnp. Per client: device_tracker, internet_access, reconnect, download, upload, wifi_signal and ip_address, for the clients you pick." />
+</picture>
 
 All IDs start with the device name, for example `sensor.dream_router_7_cpu_load`, `switch.dream_router_7_wifi_guests` or `sensor.u7_lite_5_ghz_clients`. Network values keep the IDs of UniFi Network Plus (see migration), for example `sensor.unifi_wan_download`, `sensor.wifi_rx`, `button.unifi_run_speedtest`. Entity names are available in English and German.
 
 Disabled by default: per-port receive and transmit, transmit power in dBm, connected since, Network version, WiFi password and WiFi QR code.
 
+<details>
+<summary>All entity IDs (example: a Dream Router 7 with a U7 Lite, a USW Flex 2.5G, two WiFi networks and two picked clients, English names)</summary>
+
+```
+binary_sensor.dream_router_7_lan_problem                binary_sensor.dream_router_7_online
+binary_sensor.dream_router_7_overheating                binary_sensor.dream_router_7_wifi_problem
+binary_sensor.u7_lite_online                            binary_sensor.unifi_active_wan_up
+binary_sensor.unifi_speedtest_in_progress               binary_sensor.unifi_wan_internet
+binary_sensor.usw_flex_2_5g_online                      binary_sensor.usw_flex_2_5g_overheating
+button.dream_router_7_port_1_power_cycle                button.dream_router_7_restart
+button.example_phone_reconnect                          button.tv_reconnect
+button.u7_lite_restart                                  button.unifi_run_speedtest
+button.usw_flex_2_5g_restart                            device_tracker.example_phone
+device_tracker.tv                                       light.dream_router_7_display
+light.dream_router_7_status_led                         light.u7_lite_status_led
+light.usw_flex_2_5g_status_led                          select.dream_router_7_2_4_ghz_transmit_power
+select.dream_router_7_5_ghz_transmit_power              select.dream_router_7_6_ghz_transmit_power
+select.u7_lite_2_4_ghz_transmit_power                   select.u7_lite_5_ghz_transmit_power
+sensor.dream_router_7_2_4_ghz_channel                   sensor.dream_router_7_2_4_ghz_channel_utilization
+sensor.dream_router_7_2_4_ghz_clients                   sensor.dream_router_7_5_ghz_channel
+sensor.dream_router_7_5_ghz_channel_utilization         sensor.dream_router_7_5_ghz_clients
+sensor.dream_router_7_6_ghz_channel                     sensor.dream_router_7_6_ghz_channel_utilization
+sensor.dream_router_7_6_ghz_clients                     sensor.dream_router_7_clients
+sensor.dream_router_7_connected_clients                 sensor.dream_router_7_cpu_load
+sensor.dream_router_7_cpu_temperature                   sensor.dream_router_7_critical_events_24_h
+sensor.dream_router_7_guests                            sensor.dream_router_7_internet_availability
+sensor.dream_router_7_internet_drops                    sensor.dream_router_7_internet_latency
+sensor.dream_router_7_internet_provider                 sensor.dream_router_7_lan_clients
+sensor.dream_router_7_memory_usage                      sensor.dream_router_7_poe_power
+sensor.dream_router_7_port_1_link_speed                 sensor.dream_router_7_port_1_poe_power
+sensor.dream_router_7_port_2_link_speed                 sensor.dream_router_7_port_3_link_speed
+sensor.dream_router_7_port_4_link_speed                 sensor.dream_router_7_sfp_1_link_speed
+sensor.dream_router_7_speed_test_server                 sensor.dream_router_7_started
+sensor.dream_router_7_vpn_clients                       sensor.dream_router_7_wifi_clients
+sensor.example_phone_download                           sensor.example_phone_ip_address
+sensor.example_phone_upload                             sensor.example_phone_wifi_signal
+sensor.lan_rx                                           sensor.lan_tx
+sensor.tv_download                                      sensor.tv_ip_address
+sensor.tv_upload                                        sensor.tv_wifi_signal
+sensor.u7_lite_2_4_ghz_channel                          sensor.u7_lite_2_4_ghz_channel_utilization
+sensor.u7_lite_2_4_ghz_clients                          sensor.u7_lite_5_ghz_channel
+sensor.u7_lite_5_ghz_channel_utilization                sensor.u7_lite_5_ghz_clients
+sensor.u7_lite_connected_clients                        sensor.u7_lite_cpu_load
+sensor.u7_lite_memory_usage                             sensor.u7_lite_started
+sensor.unifi_active_wan_name                            sensor.unifi_speedtest_download
+sensor.unifi_speedtest_last_run                         sensor.unifi_speedtest_ping
+sensor.unifi_speedtest_upload                           sensor.unifi_wan_download
+sensor.unifi_wan_ipv4                                   sensor.unifi_wan_ipv6
+sensor.unifi_wan_upload                                 sensor.usw_flex_2_5g_connected_clients
+sensor.usw_flex_2_5g_cpu_load                           sensor.usw_flex_2_5g_memory_usage
+sensor.usw_flex_2_5g_port_1_link_speed                  sensor.usw_flex_2_5g_port_2_link_speed
+sensor.usw_flex_2_5g_port_5_link_speed                  sensor.usw_flex_2_5g_started
+sensor.wifi_rx                                          sensor.wifi_tx
+switch.dream_router_7_content_filter_ad_blocker         switch.dream_router_7_firewall_allow_example
+switch.dream_router_7_firewall_block_example            switch.dream_router_7_locate
+switch.dream_router_7_policy_internet_block             switch.dream_router_7_port_1
+switch.dream_router_7_port_1_poe                        switch.dream_router_7_port_2
+switch.dream_router_7_port_3                            switch.dream_router_7_port_4
+switch.dream_router_7_port_forward_example_forward      switch.dream_router_7_route_example_route
+switch.dream_router_7_upnp                              switch.dream_router_7_vpn_client_example_vpn
+switch.dream_router_7_vpn_server_wireguard              switch.dream_router_7_wifi_example_guest
+switch.dream_router_7_wifi_example_wifi                 switch.example_phone_internet_access
+switch.tv_internet_access                               switch.u7_lite_locate
+switch.unifi_wan_auto_speedtest                         switch.usw_flex_2_5g_locate
+switch.usw_flex_2_5g_port_1                             switch.usw_flex_2_5g_port_2
+time.dream_router_7_night_mode_end                      time.dream_router_7_night_mode_start
+update.dream_router_7_firmware                          update.dream_router_7_unifi_network
+update.u7_lite_firmware                                 update.usw_flex_2_5g_firmware
+```
+
+The network values keep the IDs of UniFi Network Plus (`sensor.unifi_wan_download`, `sensor.wifi_rx`, `button.unifi_run_speedtest` …); everything else starts with the device name.
+
+</details>
+
+<a id="installation"></a>
 ## Installation
 
 ### HACS (custom repository)
@@ -95,6 +161,7 @@ Settings, Devices & services: either **Discovered** (Dream Router found on its o
 
 Everything runs locally. Only the product pictures come from Ubiquiti's public device catalog (`static.ui.com`, the same source the UniFi interface uses): Home Assistant fetches the catalog at most once a week, your browser loads the pictures from there. Without internet the entities simply have no picture.
 
+<a id="security"></a>
 ## Security
 
 UniFi OS uses a self-signed certificate. At setup the integration remembers the certificate the router shows and afterwards sends the login only to a router with exactly that certificate. If it changes (factory reset, new UniFi OS install), a repair under Settings, Repairs shows the old and the new fingerprint and asks before it accepts the new one. Turn on **Verify certificate** only if the router has a certificate from a trusted authority. Diagnostics downloads contain no address, login, MAC, IP, serial number, name or WiFi password.
@@ -174,6 +241,7 @@ data:
 - Values are polled, not pushed; presence changes show within 30 seconds plus the away time.
 - Predefined zone firewall rules cannot be switched (UniFi does not allow it either).
 
+<a id="troubleshooting"></a>
 ## Troubleshooting
 
 | Problem | What to do |
@@ -188,6 +256,35 @@ data:
 
 Settings, Devices & services, UniFi Dream Router 7, three dots, Delete. Then remove it in HACS (or delete `custom_components/udr7`) and restart. Nothing is left on the router.
 
+<details>
+<summary><b>Development</b></summary>
+<br/>
+
+```bash
+python -m pytest -q -p no:logging        # simulated router in tests/conftest.py, no real router needed
+uvx ruff check . && uvx ruff format --check .
+uvx mypy@2.3.1 --python-executable <venv>/bin/python
+python tools/pruefe-uebersetzungen.py    # strings.json against translations/*.json
+```
+
+Install the test requirements into a virtual environment with `pip install -r requirements_test.txt`. The same checks run on GitHub Actions for every push and pull request, plus HACS validation and hassfest. Notes on the UniFi OS and UniFi Network interfaces are in [`CLAUDE.md`](CLAUDE.md) (German).
+
+</details>
+
+<details>
+<summary><b>Versions</b></summary>
+<br/>
+
+UniFi Dream Router 7 uses calendar versions **`YY.M.N`**: year, month, and the number of the release within that month. `26.10.1` is the first release of October 2026. Tags, release titles and the version badge are just the number, without a leading "v".
+
+</details>
+
 ## License
 
-Apache License 2.0, see [LICENSE](LICENSE) and [NOTICE](NOTICE).
+[Apache License 2.0](LICENSE), Copyright 2026 SH1FT-W.
+
+<br/>
+
+<div align="center">
+  <sub>A <a href="https://sh1ft-w.github.io"><b>SH1FT-W</b></a> project &nbsp;·&nbsp; <a href="https://sh1ft-w.github.io/unifi-unas">UniFi UNAS</a> &nbsp;·&nbsp; <a href="https://sh1ft-w.github.io/casora">Casora</a> &nbsp;·&nbsp; <a href="https://sh1ft-w.github.io/flode">FLODE</a> &nbsp;·&nbsp; <a href="https://sh1ft-w.github.io/pulse">Pulse</a> &nbsp;·&nbsp; Built with <a href="https://claude.ai">Claude</a></sub>
+</div>

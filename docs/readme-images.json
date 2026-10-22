@@ -1,0 +1,121 @@
+{
+  "$comment": "Content of the README card pictures. Render with sh1ft-w.github.io/theme/v1/readme-images: node render.mjs <this repo> cards. The title image is the original artwork, unchanged.",
+  "colors": {
+    "light": {
+      "bg": "#F4F7FC",
+      "bg2": "#E7EEF9",
+      "ink": "#0B1526",
+      "ink2": "#475569",
+      "ink3": "#7C8899",
+      "accentText": "#0058D6",
+      "accent": "#006FFF",
+      "accent2": "#5CA3FF",
+      "glow1": "rgba(0,111,255,0.13)",
+      "glow2": "rgba(0,60,150,0.08)",
+      "frame": "rgba(5,25,60,0.10)",
+      "pillBg": "#ffffff",
+      "pillLine": "rgba(5,25,60,0.08)",
+      "win": "#060d1a",
+      "bar": ""
+    },
+    "dark": {
+      "bg": "#060B14",
+      "bg2": "#0C1626",
+      "ink": "#EAF1FB",
+      "ink2": "rgba(220,230,245,0.84)",
+      "ink3": "rgba(220,230,245,0.52)",
+      "accentText": "#6AAEFF",
+      "accent": "#2F8BFF",
+      "accent2": "#006FFF",
+      "glow1": "rgba(47,139,255,0.20)",
+      "glow2": "rgba(0,60,150,0.18)",
+      "frame": "rgba(255,255,255,0.10)",
+      "pillBg": "rgba(255,255,255,0.06)",
+      "pillLine": "rgba(255,255,255,0.10)",
+      "win": "#060d1a",
+      "bar": ""
+    }
+  },
+  "fonts": {
+    "display": "\"Archivo\", -apple-system, system-ui, sans-serif",
+    "body": "\"Inter\", -apple-system, system-ui, sans-serif",
+    "mono": "\"JetBrains Mono\", ui-monospace, Menlo, monospace",
+    "google": "https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap"
+  },
+  "cards": {
+    "features": [
+      {
+        "icon": "speedometer",
+        "title": "Like the dashboard",
+        "text": "Throughput of WiFi, LAN and internet, clients, latency, availability, public IP, provider and critical events, as in UniFi Network."
+      },
+      {
+        "icon": "wifi",
+        "title": "Every WiFi network",
+        "text": "On and off, the password as a text field and a QR code to scan, for example on a tablet for guests."
+      },
+      {
+        "icon": "shield-check",
+        "title": "Firewall and policies",
+        "text": "Every firewall policy, traffic rule and route, port forward, content filter, Policy Engine policy and VPN server as a switch."
+      },
+      {
+        "icon": "ethernet",
+        "title": "Ports and PoE",
+        "text": "Link speed and throughput per port, ports on and off with their settings restored, PoE on and off and a power cycle."
+      },
+      {
+        "icon": "lan",
+        "title": "Every UniFi device its own",
+        "text": "Access points and switches sit under the router: clients per band, channel, utilization, transmit power, LED, restart, firmware."
+      },
+      {
+        "icon": "cellphone",
+        "title": "Clients you choose",
+        "text": "Pick the phones that matter: presence, internet access, reconnect, download, upload and WiFi signal for each."
+      },
+      {
+        "icon": "speedometer-medium",
+        "title": "Speed tests",
+        "text": "Download, upload and ping, a button, an automatic test on your interval and a comparison with the speed you pay for."
+      },
+      {
+        "icon": "monitor",
+        "title": "Display and night mode",
+        "text": "The router's display with its brightness, every status LED and the night mode times, plus firmware and UniFi Network updates."
+      }
+    ],
+    "entities": [
+      {
+        "icon": "chart-line",
+        "title": "Network",
+        "text": "wan_download, wan_upload, wifi_rx, wifi_tx, lan_rx, lan_tx, clients, internet_latency, wan_availability and critical_events."
+      },
+      {
+        "icon": "speedometer",
+        "title": "Internet and speed test",
+        "text": "speedtest_download, speedtest_upload, speedtest_ping, isp, wan_ip, wan_ipv6, active_wan and the auto speed test switch."
+      },
+      {
+        "icon": "router-wireless",
+        "title": "Per device",
+        "text": "cpu_load, memory_usage, cpu_temperature, connected_clients, online, firmware, restart, locate and status_led."
+      },
+      {
+        "icon": "access-point",
+        "title": "Per band and port",
+        "text": "2_4_ghz_clients, channel, utilization, transmit_power as a select, port_1, port_1_poe, link speed and PoE power."
+      },
+      {
+        "icon": "toggle-switch",
+        "title": "Switches",
+        "text": "wifi_*, firewall_*, traffic_rule_*, route_*, port_forward_*, content_filter_*, policy_*, vpn_* and upnp."
+      },
+      {
+        "icon": "account",
+        "title": "Per client",
+        "text": "device_tracker, internet_access, reconnect, download, upload, wifi_signal and ip_address, for the clients you pick."
+      }
+    ]
+  }
+}
