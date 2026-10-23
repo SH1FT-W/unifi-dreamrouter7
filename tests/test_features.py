@@ -418,6 +418,11 @@ async def test_diagnostics_redacted(hass: HomeAssistant, setup: MockConfigEntry)
     [
         ("Idle", {"status_summary": 1, "rundate": 0}, False),
         ("Running", {}, True),
+        # Nach einem fertigen Test meldet der Router „Success“, das Gerät status_summary 2 (Issue 1)
+        ("Success", {"status_summary": 2, "rundate": 1792743123}, False),
+        # Unbekannter Wert: entscheidet der Gerätedatensatz
+        ("Whatever", {"status_summary": 1, "rundate": 1792743123}, True),
+        ("Whatever", {"status_summary": 2, "rundate": 1792743123}, False),
         (None, {"status_summary": 1, "rundate": 0}, False),
         (None, {"status_summary": 1, "rundate": 1792671000}, True),
     ],
@@ -440,6 +445,26 @@ async def test_speedtest_running_from_router(
     mock_router(aioclient_mock, health=health, devices=devices)
     await _setup(hass)
     assert hass.states.get("binary_sensor.unifi_speedtest_in_progress").state == (STATE_ON if running else STATE_OFF)
+
+
+async def test_led_without_override(hass: HomeAssistant, aioclient_mock: AiohttpClientMocker) -> None:
+    """Ohne geänderte LED-Einstellung fehlt led_override; led_state zeigt die LED trotzdem an (Issue 2)."""
+    devices = copy.deepcopy(fixture("devices"))
+    router = devices["data"][0]
+    for key in ("led_override", "led_override_color", "led_override_color_brightness"):
+        router.pop(key)
+    router["led_state"] = {"pattern": "0", "tempo": 120}
+    # Ohne led_state und led_override: keine LED
+    for key in ("led_override", "led_override_color", "led_override_color_brightness"):
+        devices["data"][1].pop(key, None)
+    mock_router(aioclient_mock, devices=devices)
+    await _setup(hass)
+    led = hass.states.get("light.dream_router_7_status_led")
+    assert led is not None and led.state == STATE_ON and led.attributes["override"] == "default"
+    assert hass.states.get("light.u7_lite_status_led") is None
+    aioclient_mock.mock_calls.clear()
+    await hass.services.async_call("light", "turn_off", {"entity_id": "light.dream_router_7_status_led"}, blocking=True)
+    assert calls(aioclient_mock, "PUT", "rest/device/gw0000000000000000000001") == [{"led_override": "off"}]
 
 
 # --- Produktbilder --------------------------------------------------------------------------------------------------
