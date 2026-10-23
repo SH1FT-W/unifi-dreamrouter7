@@ -245,7 +245,8 @@ def parse_device(raw: dict[str, Any]) -> Device:
         cpu=num(stats.get("cpu")),
         memory=num(stats.get("mem")),
         temperature=cpu_temp if cpu_temp is not None else next((t for t in temps if t is not None), None),
-        led_override=raw.get("led_override"),
+        # Ohne geänderte LED-Einstellung fehlt led_override (gesehen am UDR7, Issue 2); led_state zeigt eine LED an
+        led_override=raw.get("led_override") or ("default" if isinstance(raw.get("led_state"), dict) else None),
         led_color=led_color if isinstance(led_color, str) and led_color.startswith("#") else None,
         led_brightness=_int(raw.get("led_override_color_brightness")),
         locating=bool(raw.get("locating")),
@@ -328,6 +329,10 @@ LOG_CATEGORIES = [
 
 # hw_caps-Bit für einen LED-Ring mit einstellbarer Farbe (stat/device)
 HW_CAPS_LED_RING = 2
+
+# stat/health www.speedtest_status: fertig bzw. laufend (Kleinschreibung)
+SPEEDTEST_DONE = frozenset({"idle", "success", "failed", "failure", "error", "timeout", "canceled", "cancelled"})
+SPEEDTEST_RUNNING = frozenset({"running", "in progress", "testing", "started", "pending"})
 
 # Art einer Regel → (Schnittstelle, Pfad zum Lesen); geschaltet wird je Art in UdrClient.set_enabled
 RULE_KINDS = (
@@ -455,13 +460,18 @@ class UdrData:
     def speedtest_running(self) -> bool:
         """Selbst gestartet und noch ohne Ergebnis, oder der Router meldet einen laufenden Test.
 
-        Maßgeblich ist stat/health („Idle“ = keiner läuft): speedtest-status im Gerätedatensatz bleibt nach einem
-        Neustart des Routers als Platzhalter (lauter Nullen, rundate 0) auf status_summary 1 stehen."""
+        Maßgeblich ist stat/health: nach einem Test steht dort „Idle“ oder „Success“ (Issue 1), während eines Tests
+        „Running“. speedtest-status im Gerätedatensatz bleibt nach einem Neustart des Routers als Platzhalter (lauter
+        Nullen, rundate 0) auf status_summary 1 stehen; unbekannte Werte entscheidet er trotzdem mit."""
         if self.speedtest_started_at is not None:
             return True
         status = self.get("www", "speedtest_status")
         if isinstance(status, str) and status:
-            return status.lower() != "idle"
+            status = status.lower()
+            if status in SPEEDTEST_DONE:
+                return False
+            if status in SPEEDTEST_RUNNING:
+                return True
         gateway = self.speedtest_status
         return gateway.get("status_summary") == 1 and bool(gateway.get("rundate"))
 
