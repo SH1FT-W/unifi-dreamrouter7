@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 26.10.3 – 23.10.2026
 
 - Fixed: "Speed test in progress" no longer stays on after a finished test when the router reports the last run as "Success", so the automatic speed test runs again ([#1](https://github.com/SH1FT-W/unifi-dreamrouter7/issues/1)).
 - Fixed: the status LED light is also created for devices whose LED setting was never changed (no `led_override` in the device record); it then shows the site default as on ([#2](https://github.com/SH1FT-W/unifi-dreamrouter7/issues/2)).
