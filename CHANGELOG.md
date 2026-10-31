@@ -1,5 +1,10 @@
 # Changelog
 
+## 26.10.4 – 31.10.2026
+
+- Fixed: with Home Assistant 2026.11 the presence trackers of newly chosen clients are added enabled again. Home Assistant now adds new network trackers disabled by default, but these clients are picked on purpose.
+- Compatibility: ready for Home Assistant 2026.11, where client trackers use the integration's own client device and a too short WiFi password is reported as a validation error.
+
 ## 26.10.3 – 23.10.2026
 
 - Fixed: "Speed test in progress" no longer stays on after a finished test when the router reports the last run as "Success", so the automatic speed test runs again ([#1](https://github.com/SH1FT-W/unifi-dreamrouter7/issues/1)).
