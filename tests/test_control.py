@@ -36,7 +36,8 @@ async def test_wlan_password(hass: HomeAssistant, setup: MockConfigEntry, router
         "text", "set_value", {ATTR_ENTITY_ID: entity_id, "value": "new-example-pass"}, blocking=True
     )
     assert calls(router, "PUT", "rest/wlanconf/wlan1") == [{"x_passphrase": "new-example-pass"}]
-    with pytest.raises(ValueError, match="too short"):
+    # HA 2026.11 raises ServiceValidationError instead of ValueError
+    with pytest.raises((ValueError, ServiceValidationError), match="too short"):
         await hass.services.async_call(
             "text", "set_value", {ATTR_ENTITY_ID: entity_id, "value": "x" * 7}, blocking=True
         )

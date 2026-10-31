@@ -27,8 +27,11 @@ class ClientTracker(ClientEntity, ScannerEntity):
     """Zu Hause, solange der Client verbunden ist; Handys schlafen im WLAN, deshalb zählt der letzte Kontakt
     noch `away_seconds` lang (Optionen, Standard 5 Minuten)."""
 
-    # Ein device_tracker legt kein eigenes Gerät an (HA hängt ihn über die MAC an); Name = Client
+    # Up to HA 2026.10 a device_tracker creates no device of its own (HA attaches it by MAC, device_info is
+    # final there); from 2026.11 HA uses our client device info. Name = client
     _attr_has_entity_name = False
+    # The user picks these clients on purpose; HA 2026.11 disables new ScannerEntity trackers by default
+    _attr_entity_registry_enabled_default = True
 
     def __init__(self, coordinator: UdrCoordinator, mac: str) -> None:
         super().__init__(coordinator, mac, "client")

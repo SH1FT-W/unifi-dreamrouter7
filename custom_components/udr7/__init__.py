@@ -83,7 +83,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: UdrConfigEntry) -> bool:
     registry = dr.async_get(hass)
     device = registry.async_get_or_create(config_entry_id=entry.entry_id, **hub_device_info(coordinator))
     coordinator.device_id = device.id
-    # Client-Geräte vor den Plattformen: HA schaltet einen device_tracker ab, wenn sein Gerät (MAC) noch fehlt
+    # Client devices before the platforms: up to HA 2026.10 a device_tracker is disabled while no device has its MAC
     for mac in tracked_clients(entry):
         registry.async_get_or_create(config_entry_id=entry.entry_id, **client_device_info(coordinator, mac))
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
