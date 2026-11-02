@@ -1,6 +1,6 @@
 # Changelog
 
-## 26.11.1 – unreleased
+## 26.11.1 – 02.11.2026
 
 - New: event "New device connected" fires the first time a device with an unknown MAC address joins, with name, hostname, vendor, WiFi name, IP, network and whether the address is private (randomized). Devices already known at the first start do not fire, the list of seen addresses survives restarts. WiFi only by default; an option also includes devices connected by cable.
 - New: sensors "Internet outages today" and "Last internet outage" (start, end and duration) from the router's internet status. Outages survive restarts.
