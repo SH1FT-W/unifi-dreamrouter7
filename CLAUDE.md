@@ -10,7 +10,7 @@ UniFi-Integration. Entwickelt und geprüft an einem UDR7 mit U7 Lite und USW Fle
   Regelnamen, Heimnetz-Details, lokalen Pfade). Testdaten bleiben fiktiv (192.0.2.x, 203.0.113.7, 2001:db8::,
   aa:bb:cc:…, „Example ISP“ ASN 64500).
 - README, CHANGELOG, Release-Notizen, Issue- und Commit-Texte auf Englisch, ohne Gedankenstriche im Fließtext.
-  Code-Kommentare deutsch.
+  Code-Kommentare englisch (bestehende deutsche nur bei Änderungen an der Datei mit übersetzen).
 - Lokal committen ok, Push und Releases nur nach Rückfrage. Prod-HA nur auf ausdrücklichen Wunsch anfassen.
 - Qualität: Platin der HA Integration Quality Scale ist die Untergrenze (`quality_scale.yaml` mitpflegen).
 - Live-Tests am echten Router nur mit dem Besitzer: harmlose Schaltbefehle (LED, Gerät suchen, freier Port) ok,
