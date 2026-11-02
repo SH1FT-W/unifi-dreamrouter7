@@ -21,6 +21,7 @@ Worauf sich dieses Repo bei Home Assistant verlässt. Bei jeder Änderung am Cod
 | Text-Entität prüft `native_min`/`native_max` selbst („too short“; bis 2026.10 `ValueError`, ab 2026.11 `ServiceValidationError`, Core #186311) | `text.py` | `test_control.py::test_wlan_password` (akzeptiert beide) |
 | `device_registry.async_get_device` ist abgekündigt; Tests nutzen `async_get_device_by_identifier`/`_by_connection` mit Eintrags-ID | Tests | `test_setup.py`, `test_features.py` |
 | `RepairsFlow` mit `async_create_fix_flow(hass, issue_id, data)` | `repairs.py` | `test_features.py` |
+| `ImageEntity`: ein neues `_attr_image_last_updated` plus `async_write_ha_state` ändert den Zustand (neues Bild für Dashboards), `async_image` liefert die Bytes; das Bild entsteht im Executor (`hass.async_add_executor_job`) | `image.py` `WlanQrCode` | `test_features.py::test_wlan_qr_code_rebuilt_in_executor` |
 
 ## Fremde Integrationen
 

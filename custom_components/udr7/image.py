@@ -58,22 +58,32 @@ class WlanQrCode(UdrEntity, ImageEntity):
 
     @callback
     def _handle_coordinator_update(self) -> None:
-        self._refresh()
+        if self._payload_changed():
+            # segno builds the PNG synchronously: in the executor, the state follows once it is done
+            self.hass.async_create_task(self._async_build(self._payload), eager_start=True)
         super()._handle_coordinator_update()
 
     async def async_added_to_hass(self) -> None:
         await super().async_added_to_hass()
-        self._refresh()
+        if self._payload_changed():
+            await self._async_build(self._payload)
 
     @callback
-    def _refresh(self) -> None:
+    def _payload_changed(self) -> bool:
+        """Take over a new payload; only a changed name or password needs a new image."""
         wlan = self.coordinator.data.wlans.get(self._id)
         if wlan is None or wlan.qr_payload == self._payload:
-            return
-        # Neues Bild nur, wenn sich Name oder Passwort geändert haben
+            return False
         self._payload = wlan.qr_payload
-        self._image = qr_png(self._payload)
+        return True
+
+    async def _async_build(self, payload: str) -> None:
+        image = await self.hass.async_add_executor_job(qr_png, payload)
+        if payload != self._payload:
+            return  # changed again meanwhile; the newer build sets the image
+        self._image = image
         self._attr_image_last_updated = dt_util.utcnow()
+        self.async_write_ha_state()
 
     async def async_image(self) -> bytes | None:
         return self._image or None

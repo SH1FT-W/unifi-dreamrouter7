@@ -17,7 +17,7 @@ from homeassistant.components.repairs import DOMAIN as REPAIRS_DOMAIN
 from homeassistant.config_entries import SOURCE_REAUTH, ConfigEntryState
 from homeassistant.const import STATE_OFF, STATE_ON, STATE_UNAVAILABLE
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers import device_registry as dr, issue_registry as ir
+from homeassistant.helpers import device_registry as dr, entity_registry as er, issue_registry as ir
 from homeassistant.setup import async_setup_component
 from homeassistant.util import dt as dt_util
 import pytest
@@ -508,3 +508,43 @@ async def test_device_pictures_offline(hass: HomeAssistant, aioclient_mock: Aioh
     await _setup(hass)
     await hass.async_block_till_done()
     assert "entity_picture" not in hass.states.get("binary_sensor.u7_lite_online").attributes
+
+
+async def test_wlan_qr_code_rebuilt_in_executor(hass: HomeAssistant, aioclient_mock: AiohttpClientMocker) -> None:
+    """The QR code is rebuilt once the WiFi password changes, outside the event loop."""
+    from homeassistant.components.image import async_get_image
+
+    from custom_components.udr7 import image
+
+    def qr_png(payload: str) -> bytes:
+        try:
+            asyncio.get_running_loop()
+        except RuntimeError:
+            built.append(payload)
+            return payload.encode()
+        raise AssertionError("qr_png runs in the event loop")
+
+    built: list[str] = []
+    # Real PNG once, the rest through the stand-in
+    assert image.qr_png("WIFI:T:WPA;S:x;P:y;;").startswith(b"\x89PNG")
+    entity_id = er.async_get(hass).async_get_or_create("image", DOMAIN, f"{GW}_wlan_wlan1_qr_code").entity_id
+    mock_router(aioclient_mock)
+    with patch.object(image, "qr_png", qr_png):
+        entry = await _setup(hass)
+        first = await async_get_image(hass, entity_id)
+        assert b"P:example-pass;" in first.content
+        updated = hass.states.get(entity_id).state
+
+        # Same data again: no new image
+        await _tick(hass, entry)
+        assert len(built) == 1
+
+        wlans = copy.deepcopy(fixture("wlans"))
+        wlans["data"][0]["x_passphrase"] = "new-pass"
+        mock_router(aioclient_mock, wlans=wlans)
+        # WiFi settings are read every few rounds; a full refresh reads them now
+        entry.runtime_data._full_refresh = True
+        await _tick(hass, entry)
+        assert len(built) == 2
+        assert b"P:new-pass;" in (await async_get_image(hass, entity_id)).content
+        assert hass.states.get(entity_id).state != updated

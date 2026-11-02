@@ -1,5 +1,9 @@
 # Changelog
 
+## 26.11.1 – unreleased
+
+- Fixed: the WiFi QR code image is now built outside Home Assistant's event loop, also when it is rebuilt after the WiFi name or password changed, so building it no longer briefly blocks Home Assistant.
+
 ## 26.10.4 – 31.10.2026
 
 - Fixed: with Home Assistant 2026.11 the presence trackers of newly chosen clients are added enabled again. Home Assistant now adds new network trackers disabled by default, but these clients are picked on purpose.
