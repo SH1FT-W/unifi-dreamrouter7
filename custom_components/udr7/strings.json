@@ -78,6 +78,7 @@
           "expected_download": "Contracted download",
           "expected_upload": "Contracted upload",
           "tolerance": "Tolerance",
+          "new_devices_wired": "New devices also on LAN",
           "verify_ssl": "Verify certificate"
         },
         "data_description": {
@@ -87,6 +88,7 @@
           "expected_download": "Speed you pay for, 0 = no rating.",
           "expected_upload": "Speed you pay for, 0 = no rating.",
           "tolerance": "Deviation that still counts as expected.",
+          "new_devices_wired": "The \"New device connected\" event fires the first time a device with an unknown MAC address connects. Off: WiFi only. On: also devices connected by cable.",
           "verify_ssl": "Off by default: UniFi OS uses a self-signed certificate, so the integration remembers the certificate the router shows at setup and accepts only that one afterwards. Turn on only if the router has a certificate from a trusted authority."
         }
       }
@@ -138,6 +140,12 @@
       },
       "internet_latency": {
         "name": "Internet latency"
+      },
+      "internet_outages_today": {
+        "name": "Internet outages today"
+      },
+      "internet_last_outage": {
+        "name": "Last internet outage"
       },
       "internet_drops": {
         "name": "Internet drops"
@@ -287,6 +295,18 @@
       },
       "client_reconnect": {
         "name": "Reconnect"
+      }
+    },
+    "event": {
+      "new_device": {
+        "name": "New device connected",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "new_device": "New device"
+            }
+          }
+        }
       }
     },
     "switch": {

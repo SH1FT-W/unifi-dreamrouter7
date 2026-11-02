@@ -169,6 +169,7 @@ async def test_options(hass: HomeAssistant, setup: MockConfigEntry, aioclient_mo
         "expected_download": 200,
         "expected_upload": 50,
         "tolerance": 10,
+        "new_devices_wired": True,
         "verify_ssl": False,
     }
     result = await hass.config_entries.options.async_configure(result["flow_id"], user_input)

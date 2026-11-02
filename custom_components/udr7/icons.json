@@ -37,6 +37,12 @@
       "internet_latency": {
         "default": "mdi:timer-outline"
       },
+      "internet_outages_today": {
+        "default": "mdi:web-off"
+      },
+      "internet_last_outage": {
+        "default": "mdi:web-clock"
+      },
       "internet_drops": {
         "default": "mdi:lan-disconnect"
       },
@@ -273,6 +279,11 @@
       },
       "night_mode_end": {
         "default": "mdi:weather-sunny"
+      }
+    },
+    "event": {
+      "new_device": {
+        "default": "mdi:devices"
       }
     }
   },

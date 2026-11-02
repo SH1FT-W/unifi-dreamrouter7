@@ -42,6 +42,11 @@ DEFAULT_TOLERANCE = 10
 # So lange gilt ein Client nach dem letzten Kontakt noch als zu Hause (wie „detection time“ der UniFi-Integration)
 CONF_AWAY_SECONDS = "away_seconds"
 DEFAULT_AWAY_SECONDS = 300
+# Also report new devices that connect by cable (default: WiFi only)
+CONF_NEW_DEVICES_WIRED = "new_devices_wired"
+
+# Internet outages are kept this long (enough for "today" and the last outage)
+OUTAGE_KEEP = timedelta(days=2)
 
 # Sendeleistung der Funkmodule (radio_table[].tx_power_mode); „custom“ nur anzeigen, nicht wählbar
 TX_POWER_MODES = ["auto", "high", "medium", "low"]

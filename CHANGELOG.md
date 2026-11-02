@@ -2,6 +2,9 @@
 
 ## 26.11.1 – unreleased
 
+- New: event "New device connected" fires the first time a device with an unknown MAC address joins, with name, hostname, vendor, WiFi name, IP, network and whether the address is private (randomized). Devices already known at the first start do not fire, the list of seen addresses survives restarts. WiFi only by default; an option also includes devices connected by cable.
+- New: sensors "Internet outages today" and "Last internet outage" (start, end and duration) from the router's internet status. Outages survive restarts.
+- New: "Internet latency" has the 24 hour average of the router's monitors as an attribute, "VPN clients" the totals of the VPN servers (inactive, received and sent bytes).
 - Fixed: the WiFi QR code image is now built outside Home Assistant's event loop, also when it is rebuilt after the WiFi name or password changed, so building it no longer briefly blocks Home Assistant.
 
 ## 26.10.4 – 31.10.2026

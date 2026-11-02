@@ -23,7 +23,8 @@
    "uptime_stats": {
     "WAN": {
      "availability": 100.0,
-     "latency_average": 7
+     "latency_average": 7,
+     "time_period": 86400
     }
    }
   },
@@ -51,7 +52,10 @@
    "subsystem": "vpn",
    "status": "ok",
    "remote_user_enabled": true,
-   "remote_user_num_active": 1
+   "remote_user_num_active": 1,
+   "remote_user_num_inactive": 0,
+   "remote_user_rx_bytes": 123456,
+   "remote_user_tx_bytes": 654321
   }
  ]
 }

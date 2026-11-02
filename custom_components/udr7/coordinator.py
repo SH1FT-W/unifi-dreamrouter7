@@ -18,7 +18,9 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 from homeassistant.util import dt as dt_util
 
 from .api import (
+    Client,
     Device,
+    Outage,
     UdrAuthError,
     UdrCertificateError,
     UdrClient,
@@ -33,6 +35,7 @@ from .const import (
     CONFIG_EVERY,
     DEVICES_EVERY,
     DOMAIN,
+    OUTAGE_KEEP,
     SLOW_EVERY,
     SPEEDTEST_SECONDS,
     SPEEDTEST_TIMEOUT,
@@ -73,6 +76,17 @@ def _speedtest_finished(old: UdrData, new: UdrData) -> bool:
     )
 
 
+def _aware(value: Any) -> datetime | None:
+    """Stored timestamp; one without offset counts as UTC."""
+    try:
+        parsed = dt_util.parse_datetime(value) if isinstance(value, str) else None
+    except ValueError:  # matches the pattern but is no real date (month 13)
+        return None
+    if parsed is not None and parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=dt_util.UTC)
+    return parsed
+
+
 class UdrCoordinator(DataUpdateCoordinator[UdrData]):
     config_entry: UdrConfigEntry
 
@@ -92,6 +106,12 @@ class UdrCoordinator(DataUpdateCoordinator[UdrData]):
             hass, STORAGE_VERSION, f"{DOMAIN}.{entry.entry_id}.ports"
         )
         self._saved_ports: dict[str, dict[str, Any] | None] = {}
+        # Every client MAC ever seen (None = not seeded yet) and internet outages; survive a restart of HA
+        self._history_store: Store[dict[str, Any]] = Store(hass, STORAGE_VERSION, f"{DOMAIN}.{entry.entry_id}.history")
+        self._known_macs: set[str] | None = None
+        # rest/user answered in this round (a failed request also yields {}, which must not seed the known MACs)
+        self._known_clients_fresh = False
+        self._outages: list[Outage] = []
         # Produktbilder je sysid (catalog.py), im Hintergrund nach dem Start geladen
         self.pictures: dict[str, str] = {}
 
@@ -104,6 +124,68 @@ class UdrCoordinator(DataUpdateCoordinator[UdrData]):
 
     async def async_load_storage(self) -> None:
         self._saved_ports = await self._port_store.async_load() or {}
+        history = await self._history_store.async_load()
+        if not isinstance(history, dict):
+            return
+        if isinstance(macs := history.get("known_macs"), list):
+            self._known_macs = {str(m) for m in macs}
+        outages = history.get("outages")
+        for item in outages if isinstance(outages, list) else ():
+            if not isinstance(item, dict):
+                continue
+            start = _aware(item.get("start"))
+            if start is not None:
+                self._outages.append(Outage(start, _aware(item.get("end"))))
+
+    def _history(self) -> dict[str, Any]:
+        return {
+            # None until seeded: an empty list would count as "seeded" after a restart and report every client
+            "known_macs": sorted(self._known_macs) if self._known_macs is not None else None,
+            "outages": [
+                {"start": o.start.isoformat(), "end": o.end.isoformat() if o.end else None} for o in self._outages
+            ],
+        }
+
+    @callback
+    def _save_history(self) -> None:
+        self._history_store.async_delay_save(self._history, 10)
+
+    @callback
+    def _new_clients(self, data: UdrData) -> list[Client]:
+        """Clients whose MAC the integration has never seen before.
+
+        On the very first start everything already known to UniFi (rest/user) or connected counts as seen, so there
+        is no burst of events. Seeding waits for a round in which stat/sta and rest/user both answered; an empty
+        client list (stat/sta failed) neither seeds nor reports anything."""
+        if not data.clients:
+            return []
+        if self._known_macs is None:
+            if not self._known_clients_fresh:
+                return []
+            self._known_macs = set(data.clients) | set(data.known_clients)
+            self._save_history()
+            return []
+        new = [client for mac, client in data.clients.items() if mac not in self._known_macs]
+        if new:
+            self._known_macs.update(client.mac for client in new)
+            self._save_history()
+        return new
+
+    @callback
+    def _track_outages(self, data: UdrData) -> None:
+        """Start an outage when the internet status leaves "ok" and end it when it is back."""
+        status = data.get("www", "status")
+        if not status:
+            return
+        now = dt_util.utcnow()
+        ongoing = self._outages[-1] if self._outages and self._outages[-1].end is None else None
+        if status != "ok" and ongoing is None:
+            self._outages = [o for o in self._outages if now - (o.end or now) < OUTAGE_KEEP]
+            self._outages.append(Outage(now))
+            self._save_history()
+        elif status == "ok" and ongoing is not None:
+            self._outages[-1] = Outage(ongoing.start, now)
+            self._save_history()
 
     async def async_set_port_enabled(self, device: Device, port: int, enabled: bool) -> None:
         key = f"{device.mac}_{port}"
@@ -140,11 +222,14 @@ class UdrCoordinator(DataUpdateCoordinator[UdrData]):
             if self._due(CONFIG_EVERY):
                 data.wlans = await self.client.wlans()
                 data.rules = await self.client.rules()
-                data.known_clients = await self._partial(self.client.known_clients, "rest/user", {})
+                known = await self._partial(self.client.known_clients, "rest/user", None)
+                self._known_clients_fresh = known is not None
+                data.known_clients = known or {}
                 data.gateway_settings = await self._partial(self.client.gateway_settings, "rest/setting", {})
                 data.critical_events = await self._partial(self.client.critical_events, "system-log", None)
             else:
                 data.wlans, data.rules, data.known_clients = old.wlans, old.rules, old.known_clients
+                self._known_clients_fresh = False
                 data.gateway_settings, data.critical_events = old.gateway_settings, old.critical_events
             if self._due(SLOW_EVERY):
                 data.sysinfo = await self._partial(self.client.sysinfo, "stat/sysinfo", {})
@@ -163,6 +248,9 @@ class UdrCoordinator(DataUpdateCoordinator[UdrData]):
             if old is not None and old.speedtest_started_at is not None and not _speedtest_finished(old, data):
                 # Bis ein neues Ergebnis da ist, gilt der Speedtest als laufend
                 data.speedtest_started_at = old.speedtest_started_at
+            data.new_clients = self._new_clients(data)
+            self._track_outages(data)
+            data.outages = list(self._outages)
         except UdrAuthError as err:
             raise ConfigEntryAuthFailed(translation_domain=DOMAIN, translation_key="auth_failed") from err
         except UdrCertificateError as err:
@@ -258,3 +346,6 @@ class UdrCoordinator(DataUpdateCoordinator[UdrData]):
     async def async_shutdown(self) -> None:
         self._cancel_result_timer()
         await super().async_shutdown()
+        if self._known_macs is not None or self._outages:
+            # Write now instead of after the save delay: a reload (new options) reads the file right away
+            await self._history_store.async_save(self._history())

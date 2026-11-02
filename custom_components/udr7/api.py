@@ -282,10 +282,20 @@ class Client:
     guest: bool
     uplink_mac: str
     raw: dict[str, Any] = field(repr=False, compare=False)
+    # Vendor from the MAC prefix (stat/sta "oui"), empty if UniFi does not know it
+    manufacturer: str = ""
 
     @property
     def display_name(self) -> str:
         return self.name or self.hostname or self.mac
+
+    @property
+    def random_mac(self) -> bool:
+        """Private (randomized) address: locally administered bit set in the first octet."""
+        try:
+            return bool(int(self.mac[:2], 16) & 0x02)
+        except ValueError:
+            return False
 
 
 def parse_client(raw: dict[str, Any]) -> Client:
@@ -308,6 +318,7 @@ def parse_client(raw: dict[str, Any]) -> Client:
         guest=bool(raw.get("is_guest")),
         uplink_mac=str(raw.get("ap_mac") or raw.get("sw_mac") or raw.get("gw_mac") or "").lower(),
         raw=raw,
+        manufacturer=str(raw.get("oui") or ""),
     )
 
 
@@ -417,6 +428,14 @@ def parse_wlan(raw: dict[str, Any]) -> Wlan:
 # Gesamtstand
 
 
+@dataclass(frozen=True, slots=True)
+class Outage:
+    """Internet outage seen by the integration (stat/health www.status not "ok"); end None = still ongoing."""
+
+    start: datetime
+    end: datetime | None = None
+
+
 @dataclass(slots=True)
 class UdrData:
     # Bereich ("wlan", "wan", "www", "lan", "vpn") → Rohdaten aus stat/health
@@ -438,6 +457,10 @@ class UdrData:
     network_app: dict[str, Any] = field(default_factory=dict)
     # Speedtest per Button/Automatik gestartet (Zeitpunkt), Ergebnis steht noch aus
     speedtest_started_at: datetime | None = None
+    # Clients connected for the first time ever, only in the round they showed up (event entity)
+    new_clients: list[Client] = field(default_factory=list)
+    # Internet outages of the last days, oldest first (kept by the coordinator)
+    outages: list[Outage] = field(default_factory=list)
 
     def get(self, subsystem: str, key: str) -> Any:
         return self.health.get(subsystem, {}).get(key)

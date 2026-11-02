@@ -24,6 +24,7 @@ from .const import (
     CONF_EXPECTED_DOWNLOAD,
     CONF_EXPECTED_UPLOAD,
     CONF_FINGERPRINT,
+    CONF_NEW_DEVICES_WIRED,
     CONF_SITE,
     CONF_SPEEDTEST_MINUTES,
     CONF_TOLERANCE,
@@ -268,6 +269,9 @@ class UdrOptionsFlow(OptionsFlow):
                             min=0, max=50, unit_of_measurement="%", mode=selector.NumberSelectorMode.BOX
                         )
                     ),
+                    vol.Optional(
+                        CONF_NEW_DEVICES_WIRED, default=bool(options.get(CONF_NEW_DEVICES_WIRED, False))
+                    ): bool,
                     vol.Optional(CONF_VERIFY_SSL, default=bool(options.get(CONF_VERIFY_SSL, False))): bool,
                 }
             ),

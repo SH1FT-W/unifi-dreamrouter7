@@ -49,7 +49,7 @@ WiFi password as text, VPN servers and clients, content filters, UPnP, transmit 
 
 <!-- cards:entities -->
 <table>
-<tr><td width="50%" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/chart-line-dark.svg"><img src="docs/images/icons/chart-line-light.svg" width="22" height="22" align="absmiddle" alt=""></picture> <b>Network</b><br>wan_download, wan_upload, wifi_rx, wifi_tx, lan_rx, lan_tx, clients, internet_latency, wan_availability and critical_events.</td><td width="50%" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/speedometer-dark.svg"><img src="docs/images/icons/speedometer-light.svg" width="22" height="22" align="absmiddle" alt=""></picture> <b>Internet and speed test</b><br>speedtest_download, speedtest_upload, speedtest_ping, isp, wan_ip, wan_ipv6, active_wan and the auto speed test switch.</td></tr>
+<tr><td width="50%" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/chart-line-dark.svg"><img src="docs/images/icons/chart-line-light.svg" width="22" height="22" align="absmiddle" alt=""></picture> <b>Network</b><br>wan_download, wan_upload, wifi_rx, wifi_tx, lan_rx, lan_tx, clients, internet_latency, internet outages, wan_availability, critical_events and the new device event.</td><td width="50%" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/speedometer-dark.svg"><img src="docs/images/icons/speedometer-light.svg" width="22" height="22" align="absmiddle" alt=""></picture> <b>Internet and speed test</b><br>speedtest_download, speedtest_upload, speedtest_ping, isp, wan_ip, wan_ipv6, active_wan and the auto speed test switch.</td></tr>
 <tr><td width="50%" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/router-wireless-dark.svg"><img src="docs/images/icons/router-wireless-light.svg" width="22" height="22" align="absmiddle" alt=""></picture> <b>Per device</b><br>cpu_load, memory_usage, cpu_temperature, connected_clients, online, firmware, restart, locate and status_led.</td><td width="50%" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/access-point-dark.svg"><img src="docs/images/icons/access-point-light.svg" width="22" height="22" align="absmiddle" alt=""></picture> <b>Per band and port</b><br>2_4_ghz_clients, channel, utilization, transmit_power as a select, port_1, port_1_poe, link speed and PoE power.</td></tr>
 <tr><td width="50%" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/toggle-switch-dark.svg"><img src="docs/images/icons/toggle-switch-light.svg" width="22" height="22" align="absmiddle" alt=""></picture> <b>Switches</b><br>wifi_*, firewall_*, traffic_rule_*, route_*, port_forward_*, content_filter_*, policy_*, vpn_* and upnp.</td><td width="50%" valign="top"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/icons/account-dark.svg"><img src="docs/images/icons/account-light.svg" width="22" height="22" align="absmiddle" alt=""></picture> <b>Per client</b><br>device_tracker, internet_access, reconnect, download, upload, wifi_signal and ip_address, for the clients you pick.</td></tr>
 </table>
@@ -58,6 +58,10 @@ WiFi password as text, VPN servers and clients, content filters, UPnP, transmit 
 All IDs start with the device name, for example `sensor.dream_router_7_cpu_load`, `switch.dream_router_7_wifi_guests` or `sensor.u7_lite_5_ghz_clients`. Network values keep the IDs of UniFi Network Plus (see migration), for example `sensor.unifi_wan_download`, `sensor.wifi_rx`, `button.unifi_run_speedtest`. Entity names are available in English and German.
 
 Disabled by default: per-port receive and transmit, transmit power in dBm, connected since, Network version, WiFi password and WiFi QR code.
+
+**New device connected** (`event.dream_router_7_new_device_connected`) fires the first time a device with a MAC address the integration has never seen connects, with `mac`, `name`, `hostname`, `manufacturer` (vendor as UniFi knows it), `ssid`, `ip`, `network`, `wired`, `random_mac` (private, randomized address) and `time`. At the first start every device already known to UniFi Network counts as seen, so there is no burst of events. WiFi only by default, see options. Every new address counts as seen when it first connects, also a wired one while only WiFi is reported, so turning on LAN later reports only devices that are new from then on. Devices with a private address that changes (for example "Rotating" on iPhone) show up again with every new address; `random_mac` tells them apart. The list of seen addresses is kept across restarts.
+
+**Internet outages today** counts how often the internet status of the router (the same one as `binary_sensor.unifi_wan_internet`) left "ok" since midnight. **Last internet outage** is the start of the latest one, with `end`, `duration_seconds` (once it is over) and `ongoing`. An outage running past midnight also counts on the new day. The integration sees the status every 15 seconds, so shorter outages may be missed. While the router itself does not answer (for example during its restart) nothing is recorded. Outages are kept across restarts of Home Assistant; one that is still running when Home Assistant stops ends at the first check after the start. **Internet latency** also has the 24 hour `average` of the router's monitors, **VPN clients** the totals of the VPN servers (`inactive`, `received_bytes`, `sent_bytes`).
 
 <details>
 <summary>All entity IDs (example: a Dream Router 7 with a U7 Lite, a USW Flex 2.5G, two WiFi networks and two picked clients, English names)</summary>
@@ -72,61 +76,63 @@ button.dream_router_7_port_1_power_cycle                button.dream_router_7_re
 button.example_phone_reconnect                          button.tv_reconnect
 button.u7_lite_restart                                  button.unifi_run_speedtest
 button.usw_flex_2_5g_restart                            device_tracker.example_phone
-device_tracker.tv                                       light.dream_router_7_display
-light.dream_router_7_status_led                         light.u7_lite_status_led
-light.usw_flex_2_5g_status_led                          select.dream_router_7_2_4_ghz_transmit_power
-select.dream_router_7_5_ghz_transmit_power              select.dream_router_7_6_ghz_transmit_power
-select.u7_lite_2_4_ghz_transmit_power                   select.u7_lite_5_ghz_transmit_power
-sensor.dream_router_7_2_4_ghz_channel                   sensor.dream_router_7_2_4_ghz_channel_utilization
-sensor.dream_router_7_2_4_ghz_clients                   sensor.dream_router_7_5_ghz_channel
-sensor.dream_router_7_5_ghz_channel_utilization         sensor.dream_router_7_5_ghz_clients
-sensor.dream_router_7_6_ghz_channel                     sensor.dream_router_7_6_ghz_channel_utilization
-sensor.dream_router_7_6_ghz_clients                     sensor.dream_router_7_clients
-sensor.dream_router_7_connected_clients                 sensor.dream_router_7_cpu_load
-sensor.dream_router_7_cpu_temperature                   sensor.dream_router_7_critical_events_24_h
-sensor.dream_router_7_guests                            sensor.dream_router_7_internet_availability
-sensor.dream_router_7_internet_drops                    sensor.dream_router_7_internet_latency
+device_tracker.tv                                       event.dream_router_7_new_device_connected
+light.dream_router_7_display                            light.dream_router_7_status_led
+light.u7_lite_status_led                                light.usw_flex_2_5g_status_led
+select.dream_router_7_2_4_ghz_transmit_power            select.dream_router_7_5_ghz_transmit_power
+select.dream_router_7_6_ghz_transmit_power              select.u7_lite_2_4_ghz_transmit_power
+select.u7_lite_5_ghz_transmit_power                     sensor.dream_router_7_2_4_ghz_channel
+sensor.dream_router_7_2_4_ghz_channel_utilization       sensor.dream_router_7_2_4_ghz_clients
+sensor.dream_router_7_5_ghz_channel                     sensor.dream_router_7_5_ghz_channel_utilization
+sensor.dream_router_7_5_ghz_clients                     sensor.dream_router_7_6_ghz_channel
+sensor.dream_router_7_6_ghz_channel_utilization         sensor.dream_router_7_6_ghz_clients
+sensor.dream_router_7_clients                           sensor.dream_router_7_connected_clients
+sensor.dream_router_7_cpu_load                          sensor.dream_router_7_cpu_temperature
+sensor.dream_router_7_critical_events_24_h              sensor.dream_router_7_guests
+sensor.dream_router_7_internet_availability             sensor.dream_router_7_internet_drops
+sensor.dream_router_7_internet_latency                  sensor.dream_router_7_internet_outages_today
 sensor.dream_router_7_internet_provider                 sensor.dream_router_7_lan_clients
-sensor.dream_router_7_memory_usage                      sensor.dream_router_7_poe_power
-sensor.dream_router_7_port_1_link_speed                 sensor.dream_router_7_port_1_poe_power
-sensor.dream_router_7_port_2_link_speed                 sensor.dream_router_7_port_3_link_speed
-sensor.dream_router_7_port_4_link_speed                 sensor.dream_router_7_sfp_1_link_speed
-sensor.dream_router_7_speed_test_server                 sensor.dream_router_7_started
-sensor.dream_router_7_vpn_clients                       sensor.dream_router_7_wifi_clients
-sensor.example_phone_download                           sensor.example_phone_ip_address
-sensor.example_phone_upload                             sensor.example_phone_wifi_signal
-sensor.lan_rx                                           sensor.lan_tx
-sensor.tv_download                                      sensor.tv_ip_address
-sensor.tv_upload                                        sensor.tv_wifi_signal
-sensor.u7_lite_2_4_ghz_channel                          sensor.u7_lite_2_4_ghz_channel_utilization
-sensor.u7_lite_2_4_ghz_clients                          sensor.u7_lite_5_ghz_channel
-sensor.u7_lite_5_ghz_channel_utilization                sensor.u7_lite_5_ghz_clients
-sensor.u7_lite_connected_clients                        sensor.u7_lite_cpu_load
-sensor.u7_lite_memory_usage                             sensor.u7_lite_started
-sensor.unifi_active_wan_name                            sensor.unifi_speedtest_download
-sensor.unifi_speedtest_last_run                         sensor.unifi_speedtest_ping
-sensor.unifi_speedtest_upload                           sensor.unifi_wan_download
-sensor.unifi_wan_ipv4                                   sensor.unifi_wan_ipv6
-sensor.unifi_wan_upload                                 sensor.usw_flex_2_5g_connected_clients
-sensor.usw_flex_2_5g_cpu_load                           sensor.usw_flex_2_5g_memory_usage
-sensor.usw_flex_2_5g_port_1_link_speed                  sensor.usw_flex_2_5g_port_2_link_speed
-sensor.usw_flex_2_5g_port_5_link_speed                  sensor.usw_flex_2_5g_started
-sensor.wifi_rx                                          sensor.wifi_tx
-switch.dream_router_7_content_filter_ad_blocker         switch.dream_router_7_firewall_allow_example
-switch.dream_router_7_firewall_block_example            switch.dream_router_7_locate
-switch.dream_router_7_policy_internet_block             switch.dream_router_7_port_1
-switch.dream_router_7_port_1_poe                        switch.dream_router_7_port_2
-switch.dream_router_7_port_3                            switch.dream_router_7_port_4
-switch.dream_router_7_port_forward_example_forward      switch.dream_router_7_route_example_route
-switch.dream_router_7_upnp                              switch.dream_router_7_vpn_client_example_vpn
-switch.dream_router_7_vpn_server_wireguard              switch.dream_router_7_wifi_example_guest
-switch.dream_router_7_wifi_example_wifi                 switch.example_phone_internet_access
-switch.tv_internet_access                               switch.u7_lite_locate
-switch.unifi_wan_auto_speedtest                         switch.usw_flex_2_5g_locate
-switch.usw_flex_2_5g_port_1                             switch.usw_flex_2_5g_port_2
-time.dream_router_7_night_mode_end                      time.dream_router_7_night_mode_start
-update.dream_router_7_firmware                          update.dream_router_7_unifi_network
-update.u7_lite_firmware                                 update.usw_flex_2_5g_firmware
+sensor.dream_router_7_last_internet_outage              sensor.dream_router_7_memory_usage
+sensor.dream_router_7_poe_power                         sensor.dream_router_7_port_1_link_speed
+sensor.dream_router_7_port_1_poe_power                  sensor.dream_router_7_port_2_link_speed
+sensor.dream_router_7_port_3_link_speed                 sensor.dream_router_7_port_4_link_speed
+sensor.dream_router_7_sfp_1_link_speed                  sensor.dream_router_7_speed_test_server
+sensor.dream_router_7_started                           sensor.dream_router_7_vpn_clients
+sensor.dream_router_7_wifi_clients                      sensor.example_phone_download
+sensor.example_phone_ip_address                         sensor.example_phone_upload
+sensor.example_phone_wifi_signal                        sensor.lan_rx
+sensor.lan_tx                                           sensor.tv_download
+sensor.tv_ip_address                                    sensor.tv_upload
+sensor.tv_wifi_signal                                   sensor.u7_lite_2_4_ghz_channel
+sensor.u7_lite_2_4_ghz_channel_utilization              sensor.u7_lite_2_4_ghz_clients
+sensor.u7_lite_5_ghz_channel                            sensor.u7_lite_5_ghz_channel_utilization
+sensor.u7_lite_5_ghz_clients                            sensor.u7_lite_connected_clients
+sensor.u7_lite_cpu_load                                 sensor.u7_lite_memory_usage
+sensor.u7_lite_started                                  sensor.unifi_active_wan_name
+sensor.unifi_speedtest_download                         sensor.unifi_speedtest_last_run
+sensor.unifi_speedtest_ping                             sensor.unifi_speedtest_upload
+sensor.unifi_wan_download                               sensor.unifi_wan_ipv4
+sensor.unifi_wan_ipv6                                   sensor.unifi_wan_upload
+sensor.usw_flex_2_5g_connected_clients                  sensor.usw_flex_2_5g_cpu_load
+sensor.usw_flex_2_5g_memory_usage                       sensor.usw_flex_2_5g_port_1_link_speed
+sensor.usw_flex_2_5g_port_2_link_speed                  sensor.usw_flex_2_5g_port_5_link_speed
+sensor.usw_flex_2_5g_started                            sensor.wifi_rx
+sensor.wifi_tx                                          switch.dream_router_7_content_filter_ad_blocker
+switch.dream_router_7_firewall_allow_example            switch.dream_router_7_firewall_block_example
+switch.dream_router_7_locate                            switch.dream_router_7_policy_internet_block
+switch.dream_router_7_port_1                            switch.dream_router_7_port_1_poe
+switch.dream_router_7_port_2                            switch.dream_router_7_port_3
+switch.dream_router_7_port_4                            switch.dream_router_7_port_forward_example_forward
+switch.dream_router_7_route_example_route               switch.dream_router_7_upnp
+switch.dream_router_7_vpn_client_example_vpn            switch.dream_router_7_vpn_server_wireguard
+switch.dream_router_7_wifi_example_guest                switch.dream_router_7_wifi_example_wifi
+switch.example_phone_internet_access                    switch.tv_internet_access
+switch.u7_lite_locate                                   switch.unifi_wan_auto_speedtest
+switch.usw_flex_2_5g_locate                             switch.usw_flex_2_5g_port_1
+switch.usw_flex_2_5g_port_2                             time.dream_router_7_night_mode_end
+time.dream_router_7_night_mode_start                    update.dream_router_7_firmware
+update.dream_router_7_unifi_network                     update.u7_lite_firmware
+update.usw_flex_2_5g_firmware
 ```
 
 The network values keep the IDs of UniFi Network Plus (`sensor.unifi_wan_download`, `sensor.wifi_rx`, `button.unifi_run_speedtest` …); everything else starts with the device name.
@@ -165,6 +171,7 @@ Settings, Devices & services: either **Discovered** (Dream Router found on its o
 | Automatic speed test every | Interval of the automatic speed test switch, 60 minutes by default |
 | Contracted download, upload | The speed you pay for; 0 = no comparison |
 | Tolerance | Deviation that still counts as "as expected", 10 % by default |
+| New devices also on LAN | Off: "New device connected" only for WiFi devices. On: also for devices connected by cable |
 | Verify certificate | See Security |
 
 ## Internet access

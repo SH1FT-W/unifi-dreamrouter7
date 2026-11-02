@@ -119,6 +119,47 @@ def _isp_attrs(d: UdrData) -> dict[str, Any]:
     }
 
 
+def _outages_today(d: UdrData) -> int:
+    """Internet outages that touched today (local time), including one still running since yesterday."""
+    today = dt_util.now().date()
+    now = dt_util.utcnow()
+    return sum(
+        1 for o in d.outages if dt_util.as_local(o.start).date() <= today <= dt_util.as_local(o.end or now).date()
+    )
+
+
+def _last_outage(d: UdrData) -> datetime | None:
+    return d.outages[-1].start if d.outages else None
+
+
+def _last_outage_attrs(d: UdrData) -> dict[str, Any]:
+    if not d.outages:
+        return {}
+    outage = d.outages[-1]
+    # Duration only once the outage is over, so a running one does not write a new attribute every poll
+    return {
+        "end": outage.end.isoformat() if outage.end else None,
+        "duration_seconds": int((outage.end - outage.start).total_seconds()) if outage.end else None,
+        "ongoing": outage.end is None,
+    }
+
+
+def _latency_attrs(d: UdrData) -> dict[str, Any]:
+    """Average of the router's internet monitors over the period UniFi reports (24 h)."""
+    stats = as_dict(as_dict(d.get("wan", "uptime_stats")).get("WAN"))
+    return {"average": num(stats.get("latency_average")), "period_seconds": num(stats.get("time_period"))}
+
+
+def _vpn_attrs(d: UdrData) -> dict[str, Any]:
+    """Totals of the remote user VPN servers as stat/health reports them (not per server)."""
+    return {
+        "enabled": d.get("vpn", "remote_user_enabled"),
+        "inactive": d.get("vpn", "remote_user_num_inactive"),
+        "received_bytes": d.get("vpn", "remote_user_rx_bytes"),
+        "sent_bytes": d.get("vpn", "remote_user_tx_bytes"),
+    }
+
+
 def _latest_event(d: UdrData) -> dict[str, Any]:
     """Jüngstes kritisches Ereignis: Schlüssel, Bereich und Text, wie im Systemprotokoll."""
     events = d.critical_events or []
@@ -177,7 +218,7 @@ NETWORK_SENSORS: tuple[UdrSensorDescription, ...] = (
     _count("wlan_clients", _clients("wlan")),
     _count("lan_clients", _clients("lan")),
     _count("guest_clients", _clients("wlan", "lan", key="num_guest")),
-    _count("vpn_clients", lambda d: num(d.get("vpn", "remote_user_num_active"))),
+    _count("vpn_clients", lambda d: num(d.get("vpn", "remote_user_num_active")), attrs_fn=_vpn_attrs),
     UdrSensorDescription(
         key="internet_latency",
         device_class=SensorDeviceClass.DURATION,
@@ -185,6 +226,18 @@ NETWORK_SENSORS: tuple[UdrSensorDescription, ...] = (
         suggested_display_precision=0,
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=_rate("www", "latency"),
+        attrs_fn=_latency_attrs,
+    ),
+    UdrSensorDescription(
+        key="internet_outages_today",
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        value_fn=_outages_today,
+    ),
+    UdrSensorDescription(
+        key="internet_last_outage",
+        device_class=SensorDeviceClass.TIMESTAMP,
+        value_fn=_last_outage,
+        attrs_fn=_last_outage_attrs,
     ),
     UdrSensorDescription(
         key="internet_drops",

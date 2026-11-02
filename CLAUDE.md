@@ -53,6 +53,12 @@ Kalender-Schema **YY.M.N** ohne v, nächste Nummer aus `tools/next-version`, nie
 - Produktbilder: `catalog.py` lädt höchstens wöchentlich `static.ui.com/fingerprint/ui/public.json` (Store
   `udr7.catalog`), Zuordnung über `stat/device[].sysid` (dezimal; hex = Katalog-`sysid`, UDR7 a67a, U7 Lite a693,
   USW Flex 2.5G ed35) → `icons/<icon.id>_257x257.png`. Einziger Internetzugriff, ohne ihn nur keine Bilder.
+- Live gelesen 02.11.2026: `stat/sta[].oui` = Hersteller (leer, wenn unbekannt); `stat/health` www: `status`, `latency`,
+  `uptime`, `drops`; wan `uptime_stats.WAN` (`availability`, `latency_average`, `time_period` 86400, `monitors`);
+  vpn nur Summen (`remote_user_num_active`/`_num_inactive`/`_rx_bytes`/`_tx_bytes`), nicht je Server. v2
+  `wireguard/users` (auch `wireguard/<network_id>/users`) liefert nur konfigurierte Peers (`name`, `interface_ip`,
+  `network_id`, `public_key`), keinen Handshake und keine Bytes; v2 `vpn/connections` → `{"connections": []}` (Inhalt
+  bei aktiver Verbindung ungeprüft); `teleport/clients`, `vpn/servers`, `stat/vpn` 404.
 - Live lesen: `.venv/bin/python tools/live-lesen.py [host]` (Zugang aus dem Schlüsselbund, Dienst `udr7-test`).
 
 ## Prüfen

@@ -89,7 +89,7 @@
       {
         "icon": "chart-line",
         "title": "Network",
-        "text": "wan_download, wan_upload, wifi_rx, wifi_tx, lan_rx, lan_tx, clients, internet_latency, wan_availability and critical_events."
+        "text": "wan_download, wan_upload, wifi_rx, wifi_tx, lan_rx, lan_tx, clients, internet_latency, internet outages, wan_availability, critical_events and the new device event."
       },
       {
         "icon": "speedometer",

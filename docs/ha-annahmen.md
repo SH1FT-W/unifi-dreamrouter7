@@ -22,6 +22,9 @@ Worauf sich dieses Repo bei Home Assistant verlässt. Bei jeder Änderung am Cod
 | `device_registry.async_get_device` ist abgekündigt; Tests nutzen `async_get_device_by_identifier`/`_by_connection` mit Eintrags-ID | Tests | `test_setup.py`, `test_features.py` |
 | `RepairsFlow` mit `async_create_fix_flow(hass, issue_id, data)` | `repairs.py` | `test_features.py` |
 | `ImageEntity`: ein neues `_attr_image_last_updated` plus `async_write_ha_state` ändert den Zustand (neues Bild für Dashboards), `async_image` liefert die Bytes; das Bild entsteht im Executor (`hass.async_add_executor_job`) | `image.py` `WlanQrCode` | `test_features.py::test_wlan_qr_code_rebuilt_in_executor` |
+| `EventEntity`: `_trigger_event(typ, attribute)` plus `async_write_ha_state` schreibt ein Ereignis (Zustand = Zeitpunkt, Attribute `event_type` + eigene); der Typ muss in `_attr_event_types` stehen, Übersetzung unter `entity.event.<key>.state_attributes.event_type.state`; nach einem Neustart stellt HA das letzte Ereignis wieder her, ohne neu zu feuern | `event.py` `NewDeviceEvent` | `test_history.py::test_new_device_event`, `::test_new_wired_device_with_option` |
+| Ein `DataUpdateCoordinator` mit `config_entry` ruft beim Entladen `async_shutdown` auf; dort schreibt der Coordinator die gesehenen MACs und Ausfälle sofort (`Store`), damit ein Neuladen nach geänderten Optionen nicht den älteren Stand liest | `coordinator.py` `async_shutdown`, `_history_store` | `test_history.py::test_new_device_event`, `::test_internet_outages` |
+| Sensor mit `state_class` `total_increasing`: fällt der Wert (0 um Mitternacht), wertet die Statistik das als neuen Zählbeginn | `sensor.py` `internet_outages_today` | keiner (Tests prüfen nur den Zustand 0, nicht die Statistik) |
 
 ## Fremde Integrationen
 

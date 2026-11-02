@@ -78,6 +78,7 @@
           "expected_download": "Gebuchter Download",
           "expected_upload": "Gebuchter Upload",
           "tolerance": "Toleranz",
+          "new_devices_wired": "Neue Geräte auch im LAN",
           "verify_ssl": "Zertifikat prüfen"
         },
         "data_description": {
@@ -87,6 +88,7 @@
           "expected_download": "Geschwindigkeit laut Vertrag, 0 = keine Bewertung.",
           "expected_upload": "Geschwindigkeit laut Vertrag, 0 = keine Bewertung.",
           "tolerance": "Abweichung, die noch als wie erwartet gilt.",
+          "new_devices_wired": "Das Ereignis „Neues Gerät verbunden“ feuert, wenn sich zum ersten Mal ein Gerät mit unbekannter MAC-Adresse verbindet. Aus: nur WLAN. An: auch Geräte am Kabel.",
           "verify_ssl": "Standardmäßig aus: UniFi OS nutzt ein selbstsigniertes Zertifikat. Die Integration merkt sich das Zertifikat, das der Router bei der Einrichtung zeigt, und akzeptiert danach nur dieses. Nur einschalten, wenn der Router ein Zertifikat einer vertrauenswürdigen Stelle hat."
         }
       }
@@ -138,6 +140,12 @@
       },
       "internet_latency": {
         "name": "Internet-Latenz"
+      },
+      "internet_outages_today": {
+        "name": "Internetausfälle heute"
+      },
+      "internet_last_outage": {
+        "name": "Letzter Internetausfall"
       },
       "internet_drops": {
         "name": "Internet-Aussetzer"
@@ -287,6 +295,18 @@
       },
       "client_reconnect": {
         "name": "Neu verbinden"
+      }
+    },
+    "event": {
+      "new_device": {
+        "name": "Neues Gerät verbunden",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "new_device": "Neues Gerät"
+            }
+          }
+        }
       }
     },
     "switch": {
