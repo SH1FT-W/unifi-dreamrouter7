@@ -45,7 +45,7 @@ jobs:
       - name: Übersetzungen vollständig
         run: .venv/bin/python tools/pruefe-uebersetzungen.py
       - name: Tests
-        run: .venv/bin/python -m pytest -q -p no:logging --cov=custom_components --cov-report=term --cov-fail-under=94
+        run: .venv/bin/python -m pytest -q -p no:logging --cov=custom_components --cov-report=term --cov-fail-under=95
 
   hassfest:
     name: Hassfest
