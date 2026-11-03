@@ -142,12 +142,15 @@ The network values keep the IDs of UniFi Network Plus (`sensor.unifi_wan_downloa
 <a id="installation"></a>
 ## Installation
 
-### Marketplace (custom repository)
+### Marketplace
 
 The Marketplace is under Settings → Marketplace. On Home Assistant before 2026.11 it is still called HACS.
 
-1. Marketplace, three dots, Custom repositories: `https://github.com/SH1FT-W/unifi-dreamrouter7`, type Integration.
-2. Install **UniFi Dream Router 7** and restart Home Assistant.
+[![Open in the Marketplace](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=SH1FT-W&repository=unifi-dreamrouter7&category=integration)
+
+1. In the Marketplace, search for **UniFi Dream Router 7** (or click **Open in the Marketplace** above), download it and restart Home Assistant.
+
+Not in the search yet? Then add it as a custom repository first: in the Marketplace open the three dots menu, choose **Custom repositories** and add `https://github.com/SH1FT-W/unifi-dreamrouter7` with the type **Integration**.
 
 ### Manual
 
