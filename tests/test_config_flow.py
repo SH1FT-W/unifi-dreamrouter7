@@ -9,7 +9,7 @@ import aiohttp
 from homeassistant.config_entries import SOURCE_USER
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.aiohttp_client import async_create_clientsession
 import pytest
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
@@ -85,12 +85,15 @@ async def test_user_flow_certificate_unreadable(
 
 
 async def test_user_flow_verify_ssl(hass: HomeAssistant, router: AiohttpClientMocker) -> None:
-    with patch("custom_components.udr7.async_get_clientsession", wraps=async_get_clientsession) as session:
+    with patch("custom_components.udr7.async_create_clientsession", wraps=async_create_clientsession) as session:
         result = await hass.config_entries.flow.async_configure(await _start(hass), {**ENTRY_DATA, "verify_ssl": True})
     assert result["type"] is FlowResultType.CREATE_ENTRY
     assert result["data"] == ENTRY_DATA
     assert result["options"] == {"verify_ssl": True}
-    assert session.call_args.kwargs == {"verify_ssl": True}
+    assert session.call_args.kwargs["verify_ssl"] is True
+    assert isinstance(session.call_args.kwargs["cookie_jar"], aiohttp.DummyCookieJar)
+    # Flow check: released by us (detach); entry setup: released by HA on unload
+    assert [c.kwargs["auto_cleanup"] for c in session.call_args_list] == [False, True]
 
 
 async def test_reauth(hass: HomeAssistant, setup: MockConfigEntry, aioclient_mock: AiohttpClientMocker) -> None:

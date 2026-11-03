@@ -73,6 +73,8 @@ async def validate(
         return "cert_changed", None, ""
     except UdrError:
         return "cannot_connect", None, ""
+    finally:
+        client.detach()
     gateway = next((d for d in devices.values() if d.is_gateway), None)
     if gateway is None:
         return "no_gateway", None, ""
@@ -95,12 +97,13 @@ class UdrConfigFlow(ConfigFlow, domain=DOMAIN):
         """Von HAs DHCP-Erkennung gefunden (ARP-Tabelle: Ubiquiti-MAC, Rückwärts-DNS „unifi“); /api/system bestätigt
         ohne Anmeldung, dass es ein Dream Router ist, und liefert die MAC des Geräts (die unique_id)."""
         host = discovery_info.ip
+        client = create_client(self.hass, {CONF_HOST: host, CONF_USERNAME: "", CONF_PASSWORD: ""})
         try:
-            mac, name, _model = await create_client(
-                self.hass, {CONF_HOST: host, CONF_USERNAME: "", CONF_PASSWORD: ""}
-            ).identify()
+            mac, name, _model = await client.identify()
         except UdrError:
             return self.async_abort(reason="not_udr")
+        finally:
+            client.detach()
         await self.async_set_unique_id(format_mac(mac))
         # Keine Adresse übernehmen: der Router hat eine je Netz, eingerichtet ist die, die der Nutzer gewählt hat
         self._abort_if_unique_id_configured()

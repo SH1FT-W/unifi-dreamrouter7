@@ -1,8 +1,8 @@
 """Lokaler Zugriff auf UniFi OS und die UniFi-Network-App eines Dream Router 7 (ohne HA, testbar).
 
 Anmeldung wie die Web-Oberfläche: POST /api/auth/login → Cookie `TOKEN` + Header `X-Csrf-Token`, den jede
-ändernde Anfrage mitschicken muss. Beides schickt der Client selbst als Header, damit er HAs gemeinsame Session
-nutzen kann (ohne eigenen Cookie-Speicher). Die Network-App hat zwei Schnittstellen:
+ändernde Anfrage mitschicken muss. Beides schickt der Client selbst als Header; seine Session hat keinen
+Cookie-Speicher (eigene Session je Client, siehe `create_client`). Die Network-App hat zwei Schnittstellen:
 
 - klassisch `/proxy/network/api/s/<site>/…`, Antwort `{"meta": {"rc": "ok"}, "data": [...]}`
 - v2 `/proxy/network/v2/api/site/<site>/…`, Antwort direkt (Liste oder Objekt)
@@ -536,8 +536,11 @@ class UdrClient:
         *,
         verify_ssl: bool = False,
         fingerprint: str | None = None,
+        owns_session: bool = False,
     ) -> None:
         self._session = session
+        # Only a session made for this client is detached by it, never HA's shared one
+        self._owns_session = owns_session
         self.host = host
         self.site = site
         # UniFi OS kommt mit selbstsigniertem Zertifikat. Standard: nur das bei der Einrichtung gemerkte Zertifikat
@@ -557,12 +560,24 @@ class UdrClient:
     def base_url(self) -> str:
         return f"https://{self.host}"
 
+    def detach(self) -> None:
+        """Release a session made with auto_cleanup=False (config flow); HA's close() only warns."""
+        if self._owns_session and not self._session.closed:
+            self._session.detach()
+
+    def _check_open(self) -> None:
+        # After the entry unloads, HA detaches the entry's session; a command still running would otherwise end
+        # in aiohttp's RuntimeError("Session is closed")
+        if self._session.closed:
+            raise UdrError("session closed (integration unloaded or Home Assistant stopping)")
+
     # --- Transport ---------------------------------------------------------------------------------------------------
 
     async def login(self, *, force: bool = False) -> None:
         async with self._login_lock:
             if self._auth is not None and not force:
                 return  # parallele Anfrage hat sich schon angemeldet
+            self._check_open()
             try:
                 async with asyncio.timeout(HTTP_TIMEOUT):
                     resp = await self._session.post(
@@ -587,6 +602,11 @@ class UdrClient:
                 raise UdrCertificateError(err.got.hex()) from err
             except (TimeoutError, aiohttp.ClientError) as err:
                 raise UdrError(f"cannot connect: {err}") from err
+            except (RuntimeError, AttributeError, AssertionError) as err:
+                # HA detached the session while this request was still connecting (entry unloaded)
+                if not self._session.closed:
+                    raise
+                raise UdrError("session closed (integration unloaded or Home Assistant stopping)") from err
 
     async def _request(self, method: str, path: str, json: Any = None, *, relogin: bool = True) -> Any:
         if self._auth is None:
@@ -594,6 +614,7 @@ class UdrClient:
         # Den beim Senden benutzten Anmeldestand merken: nur er darf bei 401 verworfen werden
         used = self._auth
         headers = dict(used or {})
+        self._check_open()
         try:
             async with asyncio.timeout(HTTP_TIMEOUT):
                 resp = await self._session.request(
@@ -628,6 +649,11 @@ class UdrClient:
             raise UdrCertificateError(err.got.hex()) from err
         except (TimeoutError, aiohttp.ClientError) as err:
             raise UdrError(f"cannot connect: {err}") from err
+        except (RuntimeError, AttributeError, AssertionError) as err:
+            # HA detached the session while this request was still connecting (entry unloaded)
+            if not self._session.closed:
+                raise
+            raise UdrError("session closed (integration unloaded or Home Assistant stopping)") from err
         if not text.strip():
             return None
         try:
@@ -657,6 +683,11 @@ class UdrClient:
                     text = await resp.text()
         except (TimeoutError, aiohttp.ClientError) as err:
             raise UdrError(f"cannot connect: {err}") from err
+        except (RuntimeError, AttributeError, AssertionError) as err:
+            # HA detached the session while this request was still connecting (entry unloaded)
+            if not self._session.closed:
+                raise
+            raise UdrError("session closed (integration unloaded or Home Assistant stopping)") from err
         try:
             body = json_loads(text)
         except ValueError as err:
