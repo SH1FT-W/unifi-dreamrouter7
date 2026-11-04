@@ -52,7 +52,7 @@
       {
         "icon": "wifi",
         "title": "Every WiFi network",
-        "text": "On and off, the password as a text field and a QR code to scan, for example on a tablet for guests."
+        "text": "On and off, a field to set a new password (it never shows the current one) and a QR code to scan, for example on a tablet for guests."
       },
       {
         "icon": "shield-check",

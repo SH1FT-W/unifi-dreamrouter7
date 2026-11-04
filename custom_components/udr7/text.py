@@ -1,4 +1,4 @@
-"""WLAN-Passwort je WLAN mit Passwort (WPA-Personal) ändern."""
+"""WLAN-Passwort je WLAN mit Passwort (WPA-Personal) ändern; nur schreiben, nie als Zustand zeigen."""
 
 from __future__ import annotations
 
@@ -53,8 +53,9 @@ class WlanPassword(UdrEntity, TextEntity):
 
     @property
     def native_value(self) -> str | None:
-        wlan = self.coordinator.data.wlans.get(self._id)
-        return wlan.passphrase if wlan else None
+        # Write-only: a state would show the passphrase to every user and put it into the recorder
+        # (hacs/default#13238). The QR code image entity is there for sharing the network.
+        return None
 
     async def async_set_value(self, value: str) -> None:
         wlan = self.coordinator.data.wlans.get(self._id)

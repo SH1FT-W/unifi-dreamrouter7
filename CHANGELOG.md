@@ -1,5 +1,10 @@
 # Changelog
 
+## 26.11.3 – 04.11.2026
+
+- Changed: The WiFi password entity is write-only. It sets a new password but no longer shows the current one as its state, so the password is not visible to every Home Assistant user and is not written into the history (Marketplace review, hacs/default#13238). To share the network, use the QR code image entity.
+- Fixed: Configure opens even when the router was unreachable at startup or setup failed. It then offers the stored client selection only, so options like Verify certificate can be changed to get the setup working.
+
 ## 26.11.2 – 03.11.2026
 
 - Fixed: The integration now logs in to UniFi OS on its own HTTP session without cookies instead of Home Assistant's shared one. With the router set up by host name (for example `unifi.local`), the login cookie landed in the shared session, so adding, re-authenticating or reconfiguring with another account could silently swap the session of the running integration. Sessions used while setting up are released afterwards.

@@ -197,3 +197,24 @@ async def test_options_verify_ssl_checked(
     )
     assert result["errors"] == {"base": "cannot_connect"}
     assert API  # gleiche Basis wie in den anderen Tests
+
+
+async def test_options_while_setup_retries(hass: HomeAssistant, aioclient_mock: AiohttpClientMocker) -> None:
+    """Router unreachable at startup (setup retrying): Configure still opens, with the stored clients only.
+
+    Otherwise the user could not change Verify certificate to get the setup working (hacs/default#13238).
+    """
+    from homeassistant.config_entries import ConfigEntryState
+
+    mock_router(aioclient_mock, login_status=500)
+    entry = MockConfigEntry(
+        domain=DOMAIN, title="Dream Router 7", unique_id=GW, data=ENTRY_DATA, options={"tracked_clients": [PHONE]}
+    )
+    entry.add_to_hass(hass)
+    await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    assert entry.state is ConfigEntryState.SETUP_RETRY
+    result = await hass.config_entries.options.async_init(entry.entry_id)
+    assert result["type"] is FlowResultType.FORM
+    selector = next(v for k, v in result["data_schema"].schema.items() if k == "tracked_clients")
+    assert [o["value"] for o in selector.config["options"]] == [PHONE]

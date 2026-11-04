@@ -9,7 +9,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from homeassistant.config_entries import ConfigEntry, ConfigFlow, ConfigFlowResult, OptionsFlow
+from homeassistant.config_entries import ConfigEntry, ConfigEntryState, ConfigFlow, ConfigFlowResult, OptionsFlow
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME, CONF_VERIFY_SSL
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import selector
@@ -282,9 +282,15 @@ class UdrOptionsFlow(OptionsFlow):
         )
 
     def _client_options(self) -> list[selector.SelectOptionDict]:
-        """Bekannte Clients mit Namen zuerst; ausgewählte bleiben in der Liste, auch wenn sie unbekannt sind."""
-        data = self.config_entry.runtime_data.data
-        clients = {**data.known_clients, **data.clients}
+        """Bekannte Clients mit Namen zuerst; ausgewählte bleiben in der Liste, auch wenn sie unbekannt sind.
+
+        runtime_data exists only while the entry is loaded: while setup retries or after it failed, only the stored
+        selection is offered, so Configure still opens (e.g. to change Verify certificate).
+        """
+        clients = {}
+        if self.config_entry.state is ConfigEntryState.LOADED:
+            data = self.config_entry.runtime_data.data
+            clients = {**data.known_clients, **data.clients}
         result = [
             selector.SelectOptionDict(value=mac, label=f"{c.display_name} ({mac})")
             for mac, c in clients.items()
