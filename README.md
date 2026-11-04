@@ -10,7 +10,7 @@ WiFi, firewall, ports and clients, local, no cloud.</p>
 
 [![Version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FSH1FT-W%2Funifi-dreamrouter7%2Fmain%2Fcustom_components%2Fudr7%2Fmanifest.json&query=%24.version&label=version&style=flat-square&color=006FFF&labelColor=0B1526)](https://github.com/SH1FT-W/unifi-dreamrouter7/releases/latest)
 [![Home Assistant](https://img.shields.io/badge/Home%20Assistant-2026.9%2B-006FFF?style=flat-square&labelColor=0B1526&logo=homeassistant&logoColor=white)](https://www.home-assistant.io)
-[![Marketplace](https://img.shields.io/badge/Marketplace-custom%20repository-006FFF?style=flat-square&labelColor=0B1526)](https://hacs.xyz)
+[![Marketplace](https://img.shields.io/badge/Marketplace-default-006FFF?style=flat-square&labelColor=0B1526)](https://hacs.xyz)
 [![IoT class](https://img.shields.io/badge/iot-local%20polling-006FFF?style=flat-square&labelColor=0B1526)](https://developers.home-assistant.io/docs/creating_integration_manifest/#iot-class)
 [![Quality scale](https://img.shields.io/badge/quality%20scale-platinum%20(self--assessed)-006FFF?style=flat-square&labelColor=0B1526)](custom_components/udr7/quality_scale.yaml)
 [![License](https://img.shields.io/badge/license-Apache%202.0-006FFF?style=flat-square&labelColor=0B1526)](LICENSE)
@@ -149,8 +149,6 @@ The Marketplace is under Settings → Marketplace. On Home Assistant before 2026
 [![Open in the Marketplace](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=SH1FT-W&repository=unifi-dreamrouter7&category=integration)
 
 1. In the Marketplace, search for **UniFi Dream Router 7** (or click **Open in the Marketplace** above), download it and restart Home Assistant.
-
-Not in the search yet? Then add it as a custom repository first: in the Marketplace open the three dots menu, choose **Custom repositories** and add `https://github.com/SH1FT-W/unifi-dreamrouter7` with the type **Integration**.
 
 ### Manual
 
