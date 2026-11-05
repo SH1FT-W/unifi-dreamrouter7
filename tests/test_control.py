@@ -219,6 +219,24 @@ async def test_gateway_os_update(hass: HomeAssistant, setup: MockConfigEntry, ro
     assert calls(router, "POST", "cmd/devmgr") == []
 
 
+async def test_update_titles(hass: HomeAssistant, setup: MockConfigEntry) -> None:
+    # HA's update list shows "<area> · <title> <version>" under the device name: the software name tells the
+    # router's firmware apart from the integration's own update, which has nearly the same name
+    titles = {
+        entity_id: hass.states.get(entity_id).attributes.get("title")
+        for entity_id in (
+            "update.dream_router_7_firmware",
+            "update.dream_router_7_unifi_network",
+            "update.u7_lite_firmware",
+        )
+    }
+    assert titles == {
+        "update.dream_router_7_firmware": "UniFi OS",
+        "update.dream_router_7_unifi_network": "UniFi Network",
+        "update.u7_lite_firmware": None,
+    }
+
+
 async def test_clients(hass: HomeAssistant, setup: MockConfigEntry, router: AiohttpClientMocker) -> None:
     await call(hass, "switch", "turn_off", "switch.example_phone_internet_access")
     await call(hass, "button", "press", "button.example_phone_reconnect")

@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Changed: The update entities name their software: "UniFi OS" for the router's firmware and "UniFi Network" for the Network app. Home Assistant's update list shows it next to the version, so the router's firmware update is no longer mistaken for the update of this integration, which has nearly the same name.
+
 ## 26.11.4 – 05.11.2026
 
 - Fixed: Install on the Dream Router firmware update did nothing when the update came from UniFi OS only. The Network app does not always offer the router's own firmware and silently ignored the install command, so no error showed up. The router's firmware now installs through UniFi OS in that case.

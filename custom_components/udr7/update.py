@@ -53,6 +53,13 @@ class FirmwareUpdate(DeviceEntity, UpdateEntity):
         return self.coordinator.picture(self.device) or super().entity_picture
 
     @property
+    def title(self) -> str | None:
+        # Software name shown next to the version (HA's update list shows the device name above it), so the router's
+        # firmware is not mistaken for the integration's own update with nearly the same name
+        device = self.device
+        return "UniFi OS" if device is not None and device.is_gateway else None
+
+    @property
     def installed_version(self) -> str | None:
         device = self.device
         return device.version or None if device else None
@@ -88,6 +95,7 @@ class FirmwareUpdate(DeviceEntity, UpdateEntity):
 
 class NetworkAppUpdate(UdrEntity, UpdateEntity):
     _attr_supported_features = UpdateEntityFeature.INSTALL
+    _attr_title = "UniFi Network"
 
     def __init__(self, coordinator: UdrCoordinator) -> None:
         super().__init__(coordinator, "network_app")
