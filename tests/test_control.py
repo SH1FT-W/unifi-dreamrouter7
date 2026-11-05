@@ -178,13 +178,46 @@ async def test_led(hass: HomeAssistant, setup: MockConfigEntry, router: AiohttpC
         {"led_override": "on", "led_override_color": "#ff0000", "led_override_color_brightness": 50}
     ]
     router.mock_calls.clear()
-    # Ohne Ring (Dream Router 7): nur an/aus
+    # The console's own LED is a UniFi OS setting: led_override is stored by the Network app but never reaches it
     await call(hass, "light", "turn_off", "light.dream_router_7_status_led")
     await call(hass, "light", "turn_on", "light.dream_router_7_status_led")
-    assert calls(router, "PUT", "rest/device/gw0000000000000000000001") == [
-        {"led_override": "off"},
-        {"led_override": "on"},
+    assert calls(router, "PATCH", "/api/system") == [
+        {"ledSettings": {"enabled": False}},
+        {"ledSettings": {"enabled": True}},
     ]
+    assert calls(router, "PUT", "rest/device/gw0000000000000000000001") == []
+
+
+async def test_console_led_state(hass: HomeAssistant, aioclient_mock: AiohttpClientMocker) -> None:
+    """The console LED shows UniFi OS's ledSettings, not the Network app's led_override."""
+    from .conftest import ENTRY_DATA, GW, fixture, mock_router
+
+    system = fixture("system")
+    system["ledSettings"]["enabled"] = False
+    mock_router(aioclient_mock, system=system)
+    entry = MockConfigEntry(domain="udr7", unique_id=GW, data=ENTRY_DATA)
+    entry.add_to_hass(hass)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    state = hass.states.get("light.dream_router_7_status_led")
+    assert state.state == "off"
+    assert state.attributes["supported_color_modes"] == ["onoff"]
+
+
+async def test_console_led_without_os_setting(hass: HomeAssistant, aioclient_mock: AiohttpClientMocker) -> None:
+    """Firmware without ledSettings in /api/system: the Network app's led_override as before."""
+    from .conftest import ENTRY_DATA, GW, fixture, mock_router
+
+    system = fixture("system")
+    del system["ledSettings"]
+    mock_router(aioclient_mock, system=system)
+    entry = MockConfigEntry(domain="udr7", unique_id=GW, data=ENTRY_DATA)
+    entry.add_to_hass(hass)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    await call(hass, "light", "turn_off", "light.dream_router_7_status_led")
+    assert calls(aioclient_mock, "PUT", "rest/device/gw0000000000000000000001") == [{"led_override": "off"}]
+    assert calls(aioclient_mock, "PATCH", "/api/system") == []
 
 
 async def test_led_state_follows_command(
@@ -193,14 +226,19 @@ async def test_led_state_follows_command(
     """The switched LED shows its new state right away, not only after the next (debounced, slow) refresh.
 
     Otherwise the frontend toggle snaps back after 2 s and a second tap sends the opposite command."""
-    entity_id = "light.dream_router_7_status_led"
+    entity_id = "light.u7_lite_status_led"
     # First command: its refresh puts the coordinator's request debouncer into its 10 s cooldown
-    await call(hass, "light", "turn_off", "light.u7_lite_status_led")
-    assert hass.states.get(entity_id).state == "on"
-    await call(hass, "light", "turn_off", entity_id)
+    await call(hass, "light", "turn_on", "light.dream_router_7_display")
+    assert hass.states.get(entity_id).state == "off"
+    await call(hass, "light", "turn_on", entity_id)
     state = hass.states.get(entity_id)
+    assert state.state == "on"
+    assert state.attributes["override"] == "on"
+    # Console LED (UniFi OS setting) the same way
+    await call(hass, "light", "turn_off", "light.dream_router_7_status_led")
+    state = hass.states.get("light.dream_router_7_status_led")
     assert state.state == "off"
-    assert state.attributes["override"] == "off"
+    assert "override" not in state.attributes
     await call(hass, "light", "turn_on", "light.usw_flex_2_5g_status_led", rgb_color=[0, 255, 0], brightness=255)
     state = hass.states.get("light.usw_flex_2_5g_status_led")
     assert state.state == "on"

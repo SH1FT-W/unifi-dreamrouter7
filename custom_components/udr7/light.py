@@ -13,7 +13,7 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
-from .api import Device, UdrData
+from .api import Device, UdrData, as_dict
 from .const import DOMAIN
 from .coordinator import UdrConfigEntry, UdrCoordinator
 from .entity import DeviceEntity, UdrEntity, device_keys, track_new_items
@@ -52,7 +52,10 @@ async def async_setup_entry(
 
 
 class LedLight(DeviceEntity, LightEntity):
-    """led_override: on/off/default (default = Einstellung der Site, hier wie „an“ angezeigt)."""
+    """Status LED of a device. Access points and switches: the Network app's led_override (on/off/default; default =
+    the site setting, shown as on). The console itself (gateway): UniFi OS "ledSettings" like the console settings
+    page; the Network app stores led_override for it too, but it never reaches the LED (live 05.11.2026, UDR7 on
+    UniFi OS 5.1.35). Firmware without ledSettings keeps led_override."""
 
     _attr_entity_category = EntityCategory.CONFIG
 
@@ -63,7 +66,18 @@ class LedLight(DeviceEntity, LightEntity):
         self._attr_supported_color_modes = {mode}
 
     @property
+    def _console_led(self) -> dict[str, Any] | None:
+        """UniFi OS ledSettings if this is the console and its firmware has them."""
+        device = self.device
+        if device is None or not device.is_gateway:
+            return None
+        settings = self.coordinator.data.os_settings.get("ledSettings")
+        return settings if isinstance(settings, dict) and "enabled" in settings else None
+
+    @property
     def is_on(self) -> bool | None:
+        if (console := self._console_led) is not None:
+            return bool(console["enabled"])
         device = self.device
         if device is None or device.led_override is None:
             return None
@@ -85,9 +99,13 @@ class LedLight(DeviceEntity, LightEntity):
     @property
     def extra_state_attributes(self) -> dict[str, Any] | None:
         device = self.device
-        return {"override": device.led_override} if device else None
+        # The console's led_override has no effect, showing it would only confuse
+        return {"override": device.led_override} if device and self._console_led is None else None
 
     async def async_turn_on(self, **kwargs: Any) -> None:
+        if self._console_led is not None:
+            await self._set_console_led(True)
+            return
         device = self.device
         if device is None:
             raise HomeAssistantError(translation_domain=DOMAIN, translation_key="item_missing")
@@ -101,11 +119,22 @@ class LedLight(DeviceEntity, LightEntity):
         )
 
     async def async_turn_off(self, **kwargs: Any) -> None:
+        if self._console_led is not None:
+            await self._set_console_led(False)
+            return
         device = self.device
         if device is None:
             raise HomeAssistantError(translation_domain=DOMAIN, translation_key="item_missing")
         await self.coordinator.async_command(
             lambda: self.coordinator.client.set_led(device, on=False), applied=self._applied("off")
+        )
+
+    async def _set_console_led(self, on: bool) -> None:
+        def apply(data: UdrData) -> None:
+            data.os_settings["ledSettings"] = {**as_dict(data.os_settings.get("ledSettings")), "enabled": on}
+
+        await self.coordinator.async_command(
+            lambda: self.coordinator.client.set_os({"ledSettings": {"enabled": on}}), applied=apply
         )
 
     def _applied(

@@ -809,13 +809,15 @@ class UdrClient:
         return data[0] if data else {}
 
     async def os_status(self) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
-        """(Firmware von UniFi OS, Eintrag der Network-App, Display/Nachtmodus) aus /api/system."""
+        """(UniFi OS firmware, Network app entry, display/console LED/night mode) from /api/system."""
         system = as_dict(await self._request("GET", "/api/system"))
         firmware = as_dict(system.get("firmware"))
         network: dict[str, Any] = next(
             (c for c in as_list(as_dict(system.get("apps")).get("controllers")) if c.get("name") == "network"), {}
         )
-        settings: dict[str, Any] = {k: as_dict(system[k]) for k in ("lcmSettings", "nightMode") if k in system}
+        settings: dict[str, Any] = {
+            k: as_dict(system[k]) for k in ("lcmSettings", "ledSettings", "nightMode") if k in system
+        }
         # Farbe von Display/LED nur bei Konsolen mit „Bezel“ (so entscheidet die UniFi-OS-Oberfläche), beim UDR7 nicht
         settings["hasBezel"] = bool(as_dict(system.get("features")).get("hasBezel"))
         return firmware, network, settings

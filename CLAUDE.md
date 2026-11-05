@@ -27,6 +27,9 @@ Pfade und Formate stehen in `api.py`; Anmeldung und Zertifikat-Pinning wie bei U
 - v2-Objekte, `rest/portforward` und `rest/networkconf` immer vollständig zurück-PUTten (nur `enabled` geändert);
   `radio_table` und `port_overrides` ebenfalls ganz. `stat/alarm` gibt es seit Network 10 nicht mehr (404).
 - `PATCH /api/system` (Display, Nachtmodus) braucht Super Admin, sonst 403.
+- Status-LED der Konsole selbst: UniFi OS `ledSettings: {enabled}` in `/api/system` (PATCH wie Display). `led_override`
+  der Network-App nimmt der Router für sich an, es kommt aber nie an der LED an (live 05.11.2026, UniFi OS 5.1.35;
+  `cfgversion` bleibt gleich). Access Points und Switches weiter über `led_override` (U7 Lite geprüft).
 - Port sperren (live 22.10. geprüft): `forward: "disabled"` setzt die Network-App still auf „all“ zurück. Wie die
   offizielle Integration `port_security_enabled: true`; die App baut den Eintrag dann um (forward disabled, Netz leer)
   und `port_security_enabled: false` gibt den Port NICHT wieder frei. Deshalb merkt sich der Coordinator den Eintrag

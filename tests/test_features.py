@@ -457,7 +457,10 @@ async def test_led_without_override(hass: HomeAssistant, aioclient_mock: Aiohttp
     # Ohne led_state und led_override: keine LED
     for key in ("led_override", "led_override_color", "led_override_color_brightness"):
         devices["data"][1].pop(key, None)
-    mock_router(aioclient_mock, devices=devices)
+    # Firmware without UniFi OS ledSettings, so the console LED uses led_override as well
+    system = fixture("system")
+    del system["ledSettings"]
+    mock_router(aioclient_mock, devices=devices, system=system)
     await _setup(hass)
     led = hass.states.get("light.dream_router_7_status_led")
     assert led is not None and led.state == STATE_ON and led.attributes["override"] == "default"

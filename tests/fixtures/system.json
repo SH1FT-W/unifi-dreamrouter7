@@ -22,12 +22,18 @@
   "color": "0139FF",
   "brightness": 50
  },
+ "ledSettings": {
+  "enabled": true
+ },
  "nightMode": {
   "onMinute": 1260,
   "offMinute": 480
  },
  "features": {
   "hasBezel": false,
-  "hasLCM": true
+  "hasLCM": true,
+  "led": {
+   "canSetColor": false
+  }
  }
 }
