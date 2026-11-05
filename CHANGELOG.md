@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 26.11.4 – 05.11.2026
 
 - Fixed: Install on the Dream Router firmware update did nothing when the update came from UniFi OS only. The Network app does not always offer the router's own firmware and silently ignored the install command, so no error showed up. The router's firmware now installs through UniFi OS in that case.
 
