@@ -157,8 +157,8 @@ class LedLight(DeviceEntity, LightEntity):
 
 
 class DisplayLight(UdrEntity, LightEntity):
-    """Display des Dream Routers (UniFi OS „lcmSettings“): an/aus und Helligkeit; eine Farbe gibt es nur bei Konsolen
-    mit „Bezel“ (UDR7: nein)."""
+    """Display of the Dream Router (UniFi OS "lcmSettings"): on/off and brightness; only consoles with a "bezel" have
+    a color (UDR7: no)."""
 
     _attr_entity_category = EntityCategory.CONFIG
 
@@ -200,9 +200,17 @@ class DisplayLight(UdrEntity, LightEntity):
             changes["color"] = rgb_to_hex(kwargs[ATTR_RGB_COLOR]).lstrip("#").upper()
         if ATTR_BRIGHTNESS in kwargs:
             changes["brightness"] = max(1, round(kwargs[ATTR_BRIGHTNESS] * 100 / 255))
-        await self.coordinator.async_command(lambda: self.coordinator.client.set_os({"lcmSettings": changes}))
+        await self._set(changes)
 
     async def async_turn_off(self, **kwargs: Any) -> None:
+        await self._set({"enabled": False})
+
+    async def _set(self, changes: dict[str, Any]) -> None:
+        """Send the changes and show them until the next refresh confirms them (see UdrCoordinator.async_command)."""
+
+        def apply(data: UdrData) -> None:
+            data.os_settings["lcmSettings"] = {**as_dict(data.os_settings.get("lcmSettings")), **changes}
+
         await self.coordinator.async_command(
-            lambda: self.coordinator.client.set_os({"lcmSettings": {"enabled": False}})
+            lambda: self.coordinator.client.set_os({"lcmSettings": changes}), applied=apply
         )

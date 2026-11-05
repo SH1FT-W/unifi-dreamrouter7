@@ -344,6 +344,20 @@ async def test_display_and_night_mode(hass: HomeAssistant, setup: MockConfigEntr
     ]
 
 
+async def test_display_state_follows_command(
+    hass: HomeAssistant, setup: MockConfigEntry, router: AiohttpClientMocker
+) -> None:
+    """Like the status LED: the display shows its new state right away, also within the refresh cooldown."""
+    # First command: its refresh puts the coordinator's request debouncer into its 10 s cooldown
+    await call(hass, "light", "turn_off", "light.u7_lite_status_led")
+    await call(hass, "light", "turn_off", "light.dream_router_7_display")
+    assert hass.states.get("light.dream_router_7_display").state == "off"
+    await call(hass, "light", "turn_on", "light.dream_router_7_display", brightness=255)
+    state = hass.states.get("light.dream_router_7_display")
+    assert state.state == "on"
+    assert state.attributes["brightness"] == 255
+
+
 async def test_auto_speedtest_on_by_default(hass: HomeAssistant, setup: MockConfigEntry) -> None:
     # Wie in UniFi Network Plus: ohne früheren Zustand an
     assert hass.states.get("switch.unifi_wan_auto_speedtest").state == "on"

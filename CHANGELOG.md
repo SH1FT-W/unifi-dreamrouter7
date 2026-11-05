@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Fixed: The display light shows its new state right away, like the status LEDs. Before, the toggle snapped back for several seconds after switching.
+
 ## 26.11.7 – 05.11.2026
 
 - Fixed: The status LED of the Dream Router itself can be turned off again. It is a UniFi OS setting (like the display), and the Network app setting the integration used is stored but never reaches the router's own LED. Access points and switches keep the Network app setting.
