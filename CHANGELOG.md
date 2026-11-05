@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 26.11.7 – 05.11.2026
 
 - Fixed: The status LED of the Dream Router itself can be turned off again. It is a UniFi OS setting (like the display), and the Network app setting the integration used is stored but never reaches the router's own LED. Access points and switches keep the Network app setting.
 - Fixed: Status LEDs show their new state right away. Before, Home Assistant only showed it after the next full refresh, several seconds later and up to 10 seconds after an earlier command, so the toggle snapped back meanwhile.
