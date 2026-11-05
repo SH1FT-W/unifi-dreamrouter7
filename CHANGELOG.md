@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Fixed: The status LED switch shows its new state right away. Before, Home Assistant only showed it after the next full refresh, several seconds later and up to 10 seconds after an earlier command. The toggle snapped back meanwhile, and switching again sent the opposite command, so the LED seemed impossible to turn off.
+
 ## 26.11.6 – 05.11.2026
 
 - README and project page: new layout, shorter and easier to scan, with one table at the core.

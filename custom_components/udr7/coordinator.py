@@ -300,8 +300,15 @@ class UdrCoordinator(DataUpdateCoordinator[UdrData]):
         )
         self._cert_issue = True
 
-    async def async_command(self, command: Callable[[], Awaitable[Any]]) -> None:
-        """Befehl an den Router schicken und danach (gebündelt) alles neu abfragen."""
+    async def async_command(
+        self, command: Callable[[], Awaitable[Any]], *, applied: Callable[[UdrData], None] | None = None
+    ) -> None:
+        """Send a command to the router, then fetch everything again (debounced).
+
+        `applied` writes what the router just accepted into the current data right away. The refresh after a command
+        is debounced (a second command within 10 s waits for the cooldown) and a full round takes several seconds;
+        without it the entity kept its old state meanwhile, the frontend toggle snapped back after 2 s and a second
+        tap sent the opposite command."""
         try:
             await command()
         except UdrAuthError as err:
@@ -318,6 +325,9 @@ class UdrCoordinator(DataUpdateCoordinator[UdrData]):
                 translation_key="command_failed",
                 translation_placeholders={"error": str(err)},
             ) from err
+        if applied is not None and self.data is not None:
+            applied(self.data)
+            self.async_update_listeners()
         self._full_refresh = True
         await self.async_request_refresh()
 

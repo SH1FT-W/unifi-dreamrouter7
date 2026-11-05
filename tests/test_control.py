@@ -187,6 +187,27 @@ async def test_led(hass: HomeAssistant, setup: MockConfigEntry, router: AiohttpC
     ]
 
 
+async def test_led_state_follows_command(
+    hass: HomeAssistant, setup: MockConfigEntry, router: AiohttpClientMocker
+) -> None:
+    """The switched LED shows its new state right away, not only after the next (debounced, slow) refresh.
+
+    Otherwise the frontend toggle snaps back after 2 s and a second tap sends the opposite command."""
+    entity_id = "light.dream_router_7_status_led"
+    # First command: its refresh puts the coordinator's request debouncer into its 10 s cooldown
+    await call(hass, "light", "turn_off", "light.u7_lite_status_led")
+    assert hass.states.get(entity_id).state == "on"
+    await call(hass, "light", "turn_off", entity_id)
+    state = hass.states.get(entity_id)
+    assert state.state == "off"
+    assert state.attributes["override"] == "off"
+    await call(hass, "light", "turn_on", "light.usw_flex_2_5g_status_led", rgb_color=[0, 255, 0], brightness=255)
+    state = hass.states.get("light.usw_flex_2_5g_status_led")
+    assert state.state == "on"
+    assert state.attributes["rgb_color"] == (0, 255, 0)
+    assert state.attributes["brightness"] == 255
+
+
 async def test_radio(hass: HomeAssistant, setup: MockConfigEntry, router: AiohttpClientMocker) -> None:
     await call(hass, "select", "select_option", "select.dream_router_7_2_4_ghz_transmit_power", option="low")
     (body,) = calls(router, "PUT", "rest/device/gw0000000000000000000001")

@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
+from dataclasses import replace
 from typing import Any
 
 from homeassistant.components.light import ATTR_BRIGHTNESS, ATTR_RGB_COLOR, ColorMode, LightEntity
@@ -12,7 +13,7 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
-from .api import Device
+from .api import Device, UdrData
 from .const import DOMAIN
 from .coordinator import UdrConfigEntry, UdrCoordinator
 from .entity import DeviceEntity, UdrEntity, device_keys, track_new_items
@@ -95,14 +96,35 @@ class LedLight(DeviceEntity, LightEntity):
             color = rgb_to_hex(kwargs[ATTR_RGB_COLOR]) if ATTR_RGB_COLOR in kwargs else None
             brightness = max(1, round(kwargs[ATTR_BRIGHTNESS] * 100 / 255)) if ATTR_BRIGHTNESS in kwargs else None
         await self.coordinator.async_command(
-            lambda: self.coordinator.client.set_led(device, on=True, color=color, brightness=brightness)
+            lambda: self.coordinator.client.set_led(device, on=True, color=color, brightness=brightness),
+            applied=self._applied("on", color, brightness),
         )
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         device = self.device
         if device is None:
             raise HomeAssistantError(translation_domain=DOMAIN, translation_key="item_missing")
-        await self.coordinator.async_command(lambda: self.coordinator.client.set_led(device, on=False))
+        await self.coordinator.async_command(
+            lambda: self.coordinator.client.set_led(device, on=False), applied=self._applied("off")
+        )
+
+    def _applied(
+        self, override: str, color: str | None = None, brightness: int | None = None
+    ) -> Callable[[UdrData], None]:
+        """Show the accepted LED setting until the next refresh confirms it (see UdrCoordinator.async_command)."""
+        mac = self._mac
+
+        def apply(data: UdrData) -> None:
+            if (current := data.devices.get(mac)) is None:
+                return
+            data.devices[mac] = replace(
+                current,
+                led_override=override,
+                led_color=color if color is not None else current.led_color,
+                led_brightness=brightness if brightness is not None else current.led_brightness,
+            )
+
+        return apply
 
 
 class DisplayLight(UdrEntity, LightEntity):
