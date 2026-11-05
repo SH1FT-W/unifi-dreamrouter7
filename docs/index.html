@@ -186,6 +186,8 @@ section.tint { background: var(--bg-2); }
 .tbl th, .tbl td { text-align: left; padding: 14px 18px; border-top: 1px solid var(--line); vertical-align: top; }
 .tbl thead th { border-top: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent-ink); background: var(--card-2); }
 .tbl td:first-child { font-weight: 600; white-space: nowrap; }
+.tbl.core td:first-child { white-space: normal; }
+.tbl.core th:not(:first-child), .tbl.core td:not(:first-child) { text-align: center; width: 24%; color: var(--accent-ink); font-weight: 600; }
 .tbl code { font-size: 13px; background: var(--chip); padding: 2px 6px; border-radius: 6px; overflow-wrap: anywhere; }
 .tbl td:last-child { color: var(--ink-2); }
 
@@ -265,6 +267,9 @@ footer .fine { flex-basis: 100%; line-height: 1.6; }
   .tbl tr { border-top: 1px solid var(--line); padding: 12px 16px; }
   .tbl tr:first-child { border-top: 0; }
   .tbl td { border: 0; padding: 2px 0; }
+  .tbl.core { display: table; font-size: 14px; } .tbl.core thead { display: table-header-group; } .tbl.core tbody { display: table-row-group; }
+  .tbl.core tr { display: table-row; padding: 0; } .tbl.core th, .tbl.core td { display: table-cell; padding: 10px; border-top: 1px solid var(--line); }
+  .tbl.core thead th { border-top: 0; font-size: 11px; letter-spacing: 0.02em; }
 }
 </style></head>
 <body>
@@ -274,7 +279,7 @@ footer .fine { flex-basis: 100%; line-height: 1.6; }
     <a class="brand" href="#top"><img src="logo.png" alt="">Dream Router 7</a>
     <div class="nav-links">
       <a href="#features"><span class="en">Features</span><span class="de">Funktionen</span></a>
-      <a href="#control"><span class="en">Control</span><span class="de">Steuern</span></a>
+      <a href="#compare"><span class="en">Compared</span><span class="de">Vergleich</span></a>
       <a href="#entities"><span class="en">Entities</span><span class="de">Entitäten</span></a>
       <a href="#security" class="opt"><span class="en">Security</span><span class="de">Sicherheit</span></a>
       <a href="#faq" class="opt"><span class="en">Good to know</span><span class="de">Gut zu wissen</span></a>
@@ -348,10 +353,37 @@ footer .fine { flex-basis: 100%; line-height: 1.6; }
       <div class="tile reveal d1"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="5" rx="1"/><rect x="2" y="17" width="6" height="5" rx="1"/><rect x="16" y="17" width="6" height="5" rx="1"/><path d="M12 7v5M5 17v-2a3 3 0 0 1 3-3h8a3 3 0 0 1 3 3v2"/></svg></div><h3><span class="en">Every UniFi device its own</span><span class="de">Jedes UniFi-Gerät für sich</span></h3><p><span class="en">Access points and switches sit under the router: clients per band, channel, utilization, transmit power, LED, restart, locate, firmware.</span><span class="de">Access Points und Switches hängen unter dem Router: Clients je Band, Kanal, Auslastung, Sendeleistung, LED, Neustart, Gerät suchen, Firmware.</span></p></div>
       <div class="tile reveal d2"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg></div><h3><span class="en">Clients you choose</span><span class="de">Clients deiner Wahl</span></h3><p><span class="en">Pick the phones and devices that matter: presence, internet access, reconnect, download, upload and signal for each.</span><span class="de">Wähle die Handys und Geräte, die zählen: Anwesenheit, Internetzugang, Neu verbinden, Download, Upload und Signal für jedes.</span></p></div>
     </div>
+    <p class="cap reveal"><span class="en"><b>New in 26.11:</b> an event for every new device on the network, internet outages today with the last one, and a write-only WiFi password. Every change in the <a href="https://github.com/SH1FT-W/unifi-dreamrouter7/blob/main/CHANGELOG.md">changelog</a>.</span><span class="de"><b>Neu in 26.11:</b> ein Ereignis für jedes neue Gerät im Netz, Internetausfälle heute mit dem letzten, und ein WLAN-Passwort, das sich nur setzen lässt. Alle Änderungen im <a href="https://github.com/SH1FT-W/unifi-dreamrouter7/blob/main/CHANGELOG.md">Changelog</a>.</span></p>
   </div>
 </section>
 
-<section id="control">
+<section id="compare">
+  <div class="wrap narrow">
+    <div class="head center reveal">
+      <p class="eyebrow"><span class="en">Compared</span><span class="de">Im Vergleich</span></p>
+      <h2><span class="en">More than the<br>official integration.</span><span class="de">Mehr als die<br>offizielle Integration.</span></h2>
+    </div>
+    <div class="reveal">
+      <table class="tbl core">
+        <thead><tr><th></th><th><span class="en">Official UniFi</span><span class="de">Offizielles UniFi</span></th><th>Dream Router 7</th></tr></thead>
+        <tbody>
+          <tr><td><span class="en">WiFi networks on and off</span><span class="de">WLANs an und aus</span></td><td>&check;</td><td>&check;</td></tr>
+          <tr><td><span class="en">Client entities</span><span class="de">Client-Entitäten</span></td><td><span class="en">all ever seen</span><span class="de">alle je gesehenen</span></td><td><span class="en">the ones you pick</span><span class="de">nur ausgewählte</span></td></tr>
+          <tr><td><span class="en">Set the WiFi password</span><span class="de">WLAN-Passwort setzen</span></td><td></td><td>&check;</td></tr>
+          <tr><td><span class="en">VPN servers and clients, content filters, UPnP</span><span class="de">VPN-Server und -Clients, Inhaltsfilter, UPnP</span></td><td></td><td>&check;</td></tr>
+          <tr><td><span class="en">Throughput, client counts, internet quality, critical events</span><span class="de">Durchsatz, Client-Zahlen, Internetqualität, kritische Ereignisse</span></td><td></td><td>&check;</td></tr>
+          <tr><td><span class="en">Speed test with automation and contract comparison</span><span class="de">Speedtest mit Automatik und Vertragsvergleich</span></td><td></td><td>&check;</td></tr>
+          <tr><td><span class="en">Transmit power, locate, display and night mode</span><span class="de">Sendeleistung, Gerät suchen, Display und Nachtmodus</span></td><td></td><td>&check;</td></tr>
+          <tr><td><span class="en">Guest authorization, UniFi Network app update</span><span class="de">Gäste freischalten, Update der UniFi-Network-App</span></td><td></td><td>&check;</td></tr>
+          <tr><td><span class="en">Access points and switches as devices under the router</span><span class="de">Access Points und Switches als Geräte unter dem Router</span></td><td></td><td>&check;</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="cap reveal"><span class="en">Both can run side by side while you move automations over. Coming from UniFi Network Plus, remove it first: the network values take over its entity IDs, so dashboards and history continue.</span><span class="de">Beide können nebeneinander laufen, während du Automationen umstellst. Wer von UniFi Network Plus kommt, entfernt es zuerst: die Netzwerkwerte übernehmen seine Entity-IDs, Dashboards und Verlauf laufen weiter.</span></p>
+  </div>
+</section>
+
+<section id="control" class="tint">
   <div class="wrap split">
     <div class="reveal">
       <p class="eyebrow"><span class="en">Control</span><span class="de">Steuern</span></p>
@@ -378,7 +410,7 @@ footer .fine { flex-basis: 100%; line-height: 1.6; }
   </div>
 </section>
 
-<section id="entities" class="tint">
+<section id="entities">
   <div class="wrap">
     <div class="head center reveal">
       <p class="eyebrow"><span class="en">Entities</span><span class="de">Entitäten</span></p>
@@ -396,6 +428,7 @@ footer .fine { flex-basis: 100%; line-height: 1.6; }
           <tr><td>Switch</td><td><code>wifi_*</code> <code>firewall_*</code> <code>traffic_rule_*</code> <code>route_*</code> <code>port_forward_*</code> <code>content_filter_*</code> <code>policy_*</code> <code>vpn_*</code> <code>upnp</code></td><td><span class="en">One per WiFi network and rule, new ones appear without a restart</span><span class="de">Je WLAN und Regel einer, neue erscheinen ohne Neustart</span></td></tr>
           <tr><td><span class="en">Text, image</span><span class="de">Text, Bild</span></td><td><code>wifi_*_password</code> <code>wifi_*_qr_code</code></td><td><span class="en">Disabled by default</span><span class="de">Standardmäßig deaktiviert</span></td></tr>
           <tr><td><span class="en">Light, time</span><span class="de">Licht, Zeit</span></td><td><code>display</code> <code>night_mode_start</code> <code>night_mode_end</code></td><td><span class="en">UniFi OS settings, need admin rights in UniFi OS</span><span class="de">UniFi-OS-Einstellungen, brauchen Admin-Rechte in UniFi OS</span></td></tr>
+          <tr><td>Event, sensor</td><td><code>new_device_connected</code> <code>internet_outages_today</code> <code>last_internet_outage</code></td><td><span class="en">New MAC addresses and outages, kept across restarts</span><span class="de">Neue MAC-Adressen und Ausfälle, über Neustarts gemerkt</span></td></tr>
           <tr><td><span class="en">Per client</span><span class="de">Je Client</span></td><td><code>device_tracker</code> <code>internet_access</code> <code>reconnect</code> <code>download</code> <code>upload</code> <code>wifi_signal</code></td><td><span class="en">Only for the clients you pick</span><span class="de">Nur für die Clients, die du auswählst</span></td></tr>
         </tbody>
       </table>
@@ -403,7 +436,7 @@ footer .fine { flex-basis: 100%; line-height: 1.6; }
   </div>
 </section>
 
-<section id="security">
+<section id="security" class="tint">
   <div class="wrap">
     <div class="head center reveal">
       <p class="eyebrow"><span class="en">Security</span><span class="de">Sicherheit</span></p>
@@ -419,7 +452,7 @@ footer .fine { flex-basis: 100%; line-height: 1.6; }
   </div>
 </section>
 
-<section id="install" class="tint">
+<section id="install">
   <div class="wrap">
     <div class="head center reveal">
       <p class="eyebrow"><span class="en">Install</span><span class="de">Installation</span></p>
@@ -457,15 +490,14 @@ footer .fine { flex-basis: 100%; line-height: 1.6; }
   </div>
 </section>
 
-<section id="faq">
+<section id="faq" class="tint">
   <div class="wrap narrow">
     <div class="head center reveal">
       <p class="eyebrow"><span class="en">Good to know</span><span class="de">Gut zu wissen</span></p>
       <h2><span class="en">What UniFi<br>does its own way.</span><span class="de">Was UniFi<br>auf seine Art macht.</span></h2>
     </div>
     <div class="faq reveal">
-      <details open><summary><span class="en">Do I still need the official UniFi integration?</span><span class="de">Brauche ich die offizielle UniFi-Integration noch?</span></summary><p><span class="en">No. Both can run side by side while you move automations and dashboards over; then remove the official one. Entity IDs differ, the network values of UniFi Network Plus keep theirs.</span><span class="de">Nein. Beide können nebeneinander laufen, während du Automationen und Dashboards umstellst; danach die offizielle entfernen. Die Entity-IDs unterscheiden sich, die Netzwerkwerte von UniFi Network Plus behalten ihre.</span></p></details>
-      <details><summary><span class="en">Why not an API key?</span><span class="de">Warum kein API-Key?</span></summary><p><span class="en">An API key reads values, but switching WiFi, rules, ports or LEDs needs the same login as the web interface. So the integration logs in with a local account.</span><span class="de">Ein API-Key liest Werte, aber WLAN, Regeln, Ports oder LEDs schalten braucht dieselbe Anmeldung wie die Weboberfläche. Deshalb meldet sich die Integration mit einem lokalen Konto an.</span></p></details>
+      <details open><summary><span class="en">Why not an API key?</span><span class="de">Warum kein API-Key?</span></summary><p><span class="en">An API key reads values, but switching WiFi, rules, ports or LEDs needs the same login as the web interface. So the integration logs in with a local account.</span><span class="de">Ein API-Key liest Werte, aber WLAN, Regeln, Ports oder LEDs schalten braucht dieselbe Anmeldung wie die Weboberfläche. Deshalb meldet sich die Integration mit einem lokalen Konto an.</span></p></details>
       <details><summary><span class="en">Why can't I change the LED color?</span><span class="de">Warum kann ich die LED-Farbe nicht ändern?</span></summary><p><span class="en">Only devices with an LED ring have a color; the Dream Router 7, U7 Lite and USW Flex 2.5G have a plain status LED, on or off. The router's display has a brightness, a color only consoles with a bezel.</span><span class="de">Nur Geräte mit LED-Ring haben eine Farbe; Dream Router 7, U7 Lite und USW Flex 2.5G haben eine einfache Status-LED, an oder aus. Das Display des Routers hat eine Helligkeit, eine Farbe nur Konsolen mit Bezel.</span></p></details>
       <details><summary><span class="en">Can I lock myself out?</span><span class="de">Kann ich mich aussperren?</span></summary><p><span class="en">The internet port and the uplink of a switch have no on/off switch. Predefined zone rules cannot be switched, as in UniFi. Firewall rules you switch off are off, so think before you touch the one that lets Home Assistant in.</span><span class="de">Der Internet-Port und der Uplink eines Switches haben keinen Schalter. Vordefinierte Zonenregeln lassen sich wie in UniFi nicht schalten. Abgeschaltete Firewall-Regeln sind aus, also Vorsicht bei der, die Home Assistant hereinlässt.</span></p></details>
       <details><summary><span class="en">Is this an official interface?</span><span class="de">Ist das eine offizielle Schnittstelle?</span></summary><p><span class="en">No. The integration uses the interfaces of the UniFi Network and UniFi OS web interface. An update can change them; the entities then turn unavailable and the diagnostics show the error.</span><span class="de">Nein. Die Integration nutzt die Schnittstellen der Weboberfläche von UniFi Network und UniFi OS. Ein Update kann sie ändern; dann sind die Entitäten nicht verfügbar und die Diagnose zeigt den Fehler.</span></p></details>
