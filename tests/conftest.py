@@ -101,6 +101,7 @@ def mock_router(mock: AiohttpClientMocker, *, login_status: int = 200, clear: bo
         for item in fixture(name):
             mock.put(f"{V2}/{path}/{item['_id']}", json={})
     mock.post(f"{BASE}/api/controllers/network/update", json={})
+    mock.post(f"{BASE}/api/firmware/update", json={})
     mock.patch(f"{BASE}/api/system", json={})
     # Produktbilder: ohne eigene Antwort im Test kein Katalog (wie offline)
     mock.get("https://static.ui.com/fingerprint/ui/public.json", status=404)

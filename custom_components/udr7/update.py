@@ -1,4 +1,4 @@
-"""Updates: Firmware je UniFi-Gerät (beim Dream Router ist das UniFi OS) und die Network-App."""
+"""Updates: firmware per UniFi device (UniFi OS on the Dream Router) and the Network app."""
 
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ PARALLEL_UPDATES = 1
 
 
 def os_latest(coordinator: UdrCoordinator) -> str | None:
-    """Neueste UniFi-OS-Version laut /api/system, z. B. "v5.1.40+abc" → "5.1.40"."""
+    """Latest UniFi OS version from /api/system, e.g. "v5.1.40+abc" → "5.1.40"."""
     latest = as_dict(coordinator.data.os_firmware.get("latest"))
     version = str(latest.get("version") or "").removeprefix("v").split("+", 1)[0]
     return version or None
@@ -45,7 +45,7 @@ class FirmwareUpdate(DeviceEntity, UpdateEntity):
 
     @property
     def available(self) -> bool:
-        # Während des Updates ist das Gerät nicht „verbunden“, die Entität soll den Fortschritt trotzdem zeigen
+        # The device is not "connected" during the update; the entity should still show the progress
         return self.coordinator.last_update_success and self.device is not None
 
     @property
@@ -63,7 +63,7 @@ class FirmwareUpdate(DeviceEntity, UpdateEntity):
         if device is None:
             return None
         if device.upgradable and device.upgrade_to:
-            # „5.1.40.34200“ → wie installed_version ohne Build-Nummer vergleichen
+            # "5.1.40.34200" → compare like installed_version, without the build number
             return ".".join(device.upgrade_to.split(".")[:3])
         if device.is_gateway and (latest := os_latest(self.coordinator)) is not None:
             return latest
@@ -72,11 +72,18 @@ class FirmwareUpdate(DeviceEntity, UpdateEntity):
     @property
     def in_progress(self) -> bool:
         device = self.device
-        # state 4 = Update läuft
+        # state 4 = update running
         return device is not None and device.state == 4
 
     async def async_install(self, version: str | None, backup: bool, **kwargs: Any) -> None:
-        await self.coordinator.async_command(lambda: self.coordinator.client.upgrade_device(self._mac))
+        client = self.coordinator.client
+        device = self.device
+        if device is not None and device.is_gateway and not (device.upgradable and device.upgrade_to):
+            # The Network app does not offer this update (devmgr "upgrade" would be silently ignored);
+            # the version comes from UniFi OS, so UniFi OS installs it
+            await self.coordinator.async_command(client.update_os)
+            return
+        await self.coordinator.async_command(lambda: client.upgrade_device(self._mac))
 
 
 class NetworkAppUpdate(UdrEntity, UpdateEntity):
@@ -92,7 +99,7 @@ class NetworkAppUpdate(UdrEntity, UpdateEntity):
 
     @property
     def latest_version(self) -> str | None:
-        # updateAvailable ist null oder die neue Versionsnummer
+        # updateAvailable is null or the new version number
         update = self.coordinator.data.network_app.get("updateAvailable")
         return str(update) if update else self.installed_version
 

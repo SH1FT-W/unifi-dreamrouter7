@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Fixed: Install on the Dream Router firmware update did nothing when the update came from UniFi OS only. The Network app does not always offer the router's own firmware and silently ignored the install command, so no error showed up. The router's firmware now installs through UniFi OS in that case.
+
 ## 26.11.3 – 04.11.2026
 
 - Changed: The WiFi password entity is write-only. It sets a new password but no longer shows the current one as its state, so the password is not visible to every Home Assistant user and is not written into the history (Marketplace review, hacs/default#13238). To share the network, use the QR code image entity.

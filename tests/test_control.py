@@ -209,6 +209,16 @@ async def test_device_commands(hass: HomeAssistant, setup: MockConfigEntry, rout
     assert len(calls(router, "POST", "/api/controllers/network/update")) == 1
 
 
+async def test_gateway_os_update(hass: HomeAssistant, setup: MockConfigEntry, router: AiohttpClientMocker) -> None:
+    # The Network app does not flag the router as upgradable; the new version only comes from UniFi OS
+    # (/api/system). devmgr "upgrade" is then silently ignored, so the install must go through UniFi OS.
+    state = hass.states.get("update.dream_router_7_firmware")
+    assert (state.state, state.attributes["latest_version"]) == ("on", "5.1.40")
+    await call(hass, "update", "install", "update.dream_router_7_firmware")
+    assert len(calls(router, "POST", "/api/firmware/update")) == 1
+    assert calls(router, "POST", "cmd/devmgr") == []
+
+
 async def test_clients(hass: HomeAssistant, setup: MockConfigEntry, router: AiohttpClientMocker) -> None:
     await call(hass, "switch", "turn_off", "switch.example_phone_internet_access")
     await call(hass, "button", "press", "button.example_phone_reconnect")

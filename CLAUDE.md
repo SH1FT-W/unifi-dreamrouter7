@@ -32,6 +32,9 @@ Pfade und Formate stehen in `api.py`; Anmeldung und Zertifikat-Pinning wie bei U
   und `port_security_enabled: false` gibt den Port NICHT wieder frei. Deshalb merkt sich der Coordinator den Eintrag
   vor dem Sperren (Store `udr7.<entry_id>.ports`) und schreibt ihn beim Freigeben zurück; ohne gemerkten Stand fliegt
   der Eintrag raus (Standard des Ports).
+- Firmware des Routers selbst: die Network-App meldet sie oft nicht (`upgradable: false`), nur UniFi OS
+  (`/api/system` firmware.latest). `devmgr upgrade` wird dann still ignoriert (live 05.11.2026, 5.1.34 → 5.1.35),
+  installiert wird über `POST /api/firmware/update`.
 - Erkennung: Router meldet sich weder per mDNS noch SSDP. HAs DHCP-Erkennung scannt aber die ARP-Tabelle mit
   Rückwärts-DNS (Router antwortet mit `unifi.localdomain`) → `dhcp`-Matcher im Manifest, `async_step_dhcp` bestätigt
   per `/api/system`. Eine eigene Suche in `async_setup` läuft nicht: HA lädt eine Custom-Integration ohne Eintrag
