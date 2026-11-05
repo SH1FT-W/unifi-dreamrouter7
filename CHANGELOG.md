@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 26.11.5 – 05.11.2026
 
 - Changed: The update entities name their software: "UniFi OS" for the router's firmware and "UniFi Network" for the Network app. Home Assistant's update list shows it next to the version, so the router's firmware update is no longer mistaken for the update of this integration, which has nearly the same name.
 
