@@ -2,7 +2,7 @@
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/images/readme-title-dark.webp" />
-  <img src="docs/images/readme-title-light.webp" alt="Dream Router 7: Your network, in your hands. The feature overview of the project page in a window." />
+  <img src="docs/images/readme-title-light.webp" alt="Dream Router 7: Your network, in your hands." />
 </picture>
 
 [![Version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FSH1FT-W%2Funifi-dreamrouter7%2Fmain%2Fcustom_components%2Fudr7%2Fmanifest.json&query=%24.version&label=version&style=flat-square&color=006FFF&labelColor=0B1526)](https://github.com/SH1FT-W/unifi-dreamrouter7/releases/latest)
