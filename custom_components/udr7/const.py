@@ -29,6 +29,8 @@ STORAGE_VERSION = 1
 SPEEDTEST_SECONDS = 40
 # Kommt bis dahin kein Ergebnis, gilt der Speedtest nicht mehr als laufend
 SPEEDTEST_TIMEOUT = timedelta(minutes=3)
+# The automatic speed test checks this often whether the router's last speed test is older than the interval
+SPEEDTEST_CHECK = timedelta(minutes=5)
 
 # Optionen
 CONF_TRACKED_CLIENTS = "tracked_clients"

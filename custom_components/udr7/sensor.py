@@ -190,6 +190,11 @@ def _throughput(key: str, subsystem: str, field: str, **kwargs: Any) -> UdrSenso
     )
 
 
+def _speedtest_result(field: str) -> Callable[[UdrData], StateType | datetime]:
+    """Value of the last speed test; none without one (after a reboot the router reports last run 0 and 0 Mbit/s)."""
+    return lambda d: num(d.get("www", field)) if num(d.get("www", "speedtest_lastrun")) else None
+
+
 def _speed(key: str, field: str) -> UdrSensorDescription:
     return UdrSensorDescription(
         key=key,
@@ -197,7 +202,7 @@ def _speed(key: str, field: str) -> UdrSensorDescription:
         native_unit_of_measurement=UnitOfDataRate.MEGABITS_PER_SECOND,
         suggested_display_precision=0,
         state_class=SensorStateClass.MEASUREMENT,
-        value_fn=_rate("www", field),
+        value_fn=_speedtest_result(field),
     )
 
 
@@ -260,7 +265,7 @@ NETWORK_SENSORS: tuple[UdrSensorDescription, ...] = (
         native_unit_of_measurement=UnitOfTime.MILLISECONDS,
         suggested_display_precision=0,
         state_class=SensorStateClass.MEASUREMENT,
-        value_fn=_rate("www", "speedtest_ping"),
+        value_fn=_speedtest_result("speedtest_ping"),
     ),
     UdrSensorDescription(key="speedtest_last", device_class=SensorDeviceClass.TIMESTAMP, value_fn=_speedtest_last),
     UdrSensorDescription(

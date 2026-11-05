@@ -16,9 +16,10 @@ from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.event import async_track_time_interval
 from homeassistant.helpers.restore_state import RestoreEntity
+from homeassistant.util import dt as dt_util
 
-from .api import RULE_KINDS, Device, Port, Wlan
-from .const import CONF_SPEEDTEST_MINUTES, DEFAULT_SPEEDTEST_MINUTES, DOMAIN
+from .api import RULE_KINDS, Device, Port, Wlan, num
+from .const import CONF_SPEEDTEST_MINUTES, DEFAULT_SPEEDTEST_MINUTES, DOMAIN, SPEEDTEST_CHECK
 from .coordinator import UdrConfigEntry, UdrCoordinator
 from .entity import (
     ClientEntity,
@@ -289,7 +290,11 @@ class ClientBlockSwitch(ClientEntity, SwitchEntity):
 
 
 class AutoSpeedtestSwitch(UdrEntity, SwitchEntity, RestoreEntity):
-    """Automatischer Speedtest im eingestellten Abstand (Optionen, Standard stündlich)."""
+    """Automatic speed test in the configured interval (options, hourly by default).
+
+    The interval counts from the router's last speed test (also one started elsewhere), checked every
+    SPEEDTEST_CHECK. A plain interval timer started again with every restart of Home Assistant or reload of the
+    entry and never fired when that happened more often than the interval."""
 
     _attr_entity_category = EntityCategory.CONFIG
 
@@ -300,6 +305,8 @@ class AutoSpeedtestSwitch(UdrEntity, SwitchEntity, RestoreEntity):
         # Standard an, wie in UniFi Network Plus (das diese Integration ablöst)
         self._attr_is_on = True
         self._cancel: CALLBACK_TYPE | None = None
+        # Last start from here: a router that never records a result is not asked again every few minutes
+        self._last_attempt: datetime | None = None
 
     @property
     def extra_state_attributes(self) -> dict[str, int]:
@@ -316,7 +323,7 @@ class AutoSpeedtestSwitch(UdrEntity, SwitchEntity, RestoreEntity):
     def _schedule(self) -> None:
         self._unschedule()
         if self._attr_is_on:
-            self._cancel = async_track_time_interval(self.hass, self._run, self._interval)
+            self._cancel = async_track_time_interval(self.hass, self._run, SPEEDTEST_CHECK)
 
     @callback
     def _unschedule(self) -> None:
@@ -324,9 +331,20 @@ class AutoSpeedtestSwitch(UdrEntity, SwitchEntity, RestoreEntity):
             self._cancel()
             self._cancel = None
 
+    def _due(self) -> bool:
+        data = self.coordinator.data
+        if data is None or data.speedtest_running:
+            return False
+        lastrun = num(data.get("www", "speedtest_lastrun"))
+        runs = [dt_util.utc_from_timestamp(lastrun)] if lastrun else []
+        if self._last_attempt is not None:
+            runs.append(self._last_attempt)
+        return not runs or dt_util.utcnow() - max(runs) >= self._interval
+
     async def _run(self, _now: datetime) -> None:
-        if self.coordinator.data is not None and self.coordinator.data.speedtest_running:
+        if not self._due():
             return
+        self._last_attempt = dt_util.utcnow()
         try:
             await self.coordinator.async_start_speedtest()
         except HomeAssistantError as err:

@@ -29,7 +29,7 @@ from custom_components.udr7.api import UdrClient, UdrError, format_fingerprint
 from custom_components.udr7.const import DOMAIN
 from custom_components.udr7.diagnostics import async_get_config_entry_diagnostics
 
-from .conftest import API, BASE, ENTRY_DATA, FINGERPRINT, GW, HOST, SW, V2, calls, fixture, mock_router
+from .conftest import API, BASE, ENTRY_DATA, FINGERPRINT, GW, HOST, NOW, SW, V2, calls, fixture, mock_router
 
 NEW_FINGERPRINT = "cd" * 32
 # Echte Methode, bevor conftest sie für alle anderen Tests ersetzt
@@ -310,24 +310,29 @@ async def test_speedtest_gives_up(
     assert hass.states.get(running).state == STATE_OFF
 
 
-async def test_auto_speedtest(hass: HomeAssistant, aioclient_mock: AiohttpClientMocker) -> None:
-    """Der Schalter plant den Speedtest im eingestellten Abstand; der Zeitgeber wird hier direkt ausgelöst, statt
-    auf die Uhr zu warten (sonst hängt der Test am Timing der CI-Rechner)."""
-    timers: list[tuple[Any, timedelta]] = []
-
+def _track_timers(timers: list[tuple[Any, timedelta]]) -> Any:
     def track(_hass: HomeAssistant, action: Any, interval: timedelta) -> Any:
         timers.append((action, interval))
         return lambda: None
 
-    mock_router(aioclient_mock)
-    with patch("custom_components.udr7.switch.async_track_time_interval", side_effect=track):
+    return patch("custom_components.udr7.switch.async_track_time_interval", side_effect=track)
+
+
+async def test_auto_speedtest(
+    hass: HomeAssistant, aioclient_mock: AiohttpClientMocker, freezer: FrozenDateTimeFactory
+) -> None:
+    """The switch checks every few minutes whether the router's last speed test is older than the interval. The
+    timer is fired directly instead of waiting for the clock (otherwise the test depends on CI timing)."""
+    freezer.move_to(dt_util.utc_from_timestamp(NOW))
+    timers: list[tuple[Any, timedelta]] = []
+    mock_router(aioclient_mock)  # last run in the fixture: almost 20 hours ago, interval 60 minutes
+    with _track_timers(timers):
         await _setup(hass)
-        # Standard an: ein Zeitgeber im Abstand aus den Optionen (Standard 60 Minuten)
-        assert [interval for _action, interval in timers] == [timedelta(minutes=60)]
+        assert [interval for _action, interval in timers] == [timedelta(minutes=5)]
         await timers[-1][0](dt_util.utcnow())
         await hass.async_block_till_done()
         assert {"cmd": "speedtest"} in calls(aioclient_mock, "POST", "cmd/devmgr")
-        # Läuft schon ein Speedtest, startet der Zeitgeber keinen zweiten
+        # A speed test is running: the timer starts no second one
         aioclient_mock.mock_calls.clear()
         await timers[-1][0](dt_util.utcnow())
         assert calls(aioclient_mock, "POST", "cmd/devmgr") == []
@@ -335,6 +340,44 @@ async def test_auto_speedtest(hass: HomeAssistant, aioclient_mock: AiohttpClient
             "switch", "turn_off", {"entity_id": "switch.unifi_wan_auto_speedtest"}, blocking=True
         )
     assert hass.states.get("switch.unifi_wan_auto_speedtest").state == STATE_OFF
+
+
+async def test_auto_speedtest_counts_from_last_run(
+    hass: HomeAssistant, aioclient_mock: AiohttpClientMocker, freezer: FrozenDateTimeFactory
+) -> None:
+    """The interval counts from the router's last speed test, not from the start of Home Assistant: frequent
+    restarts must not postpone it forever (it did not run for five days with a 12 hour interval)."""
+    freezer.move_to(dt_util.utc_from_timestamp(NOW))
+    health = copy.deepcopy(fixture("health"))
+    health["data"][2]["speedtest_lastrun"] = NOW - 50 * 60
+    timers: list[tuple[Any, timedelta]] = []
+    mock_router(aioclient_mock, health=health)
+    with _track_timers(timers):
+        await _setup(hass)
+        # Last run 50 minutes ago, interval 60 minutes: not due yet
+        await timers[-1][0](dt_util.utcnow())
+        await hass.async_block_till_done()
+        assert calls(aioclient_mock, "POST", "cmd/devmgr") == []
+        # 11 minutes later it is due, although Home Assistant has only been running for 11 minutes
+        freezer.tick(timedelta(minutes=11))
+        await timers[-1][0](dt_util.utcnow())
+        await hass.async_block_till_done()
+        assert calls(aioclient_mock, "POST", "cmd/devmgr") == [{"cmd": "speedtest"}]
+
+
+async def test_speedtest_without_result(hass: HomeAssistant, aioclient_mock: AiohttpClientMocker) -> None:
+    """After a reboot the router has no speed test result (last run 0, rates 0): unknown, not 0 Mbit/s."""
+    health = copy.deepcopy(fixture("health"))
+    health["data"][2].update({"speedtest_lastrun": 0, "xput_down": 0, "xput_up": 0, "speedtest_ping": 0})
+    mock_router(aioclient_mock, health=health)
+    await _setup(hass)
+    for entity_id in (
+        "sensor.unifi_speedtest_download",
+        "sensor.unifi_speedtest_upload",
+        "sensor.unifi_speedtest_ping",
+        "sensor.unifi_speedtest_last_run",
+    ):
+        assert hass.states.get(entity_id).state == "unknown", entity_id
 
 
 # --- Geräte -----------------------------------------------------------------------------------------------------------
