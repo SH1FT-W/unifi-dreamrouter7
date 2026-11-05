@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 26.11.8 – 05.11.2026
 
 - Fixed: The automatic speed test did not run when Home Assistant restarted or the integration reloaded more often than the interval, because each start began the interval again. It now counts from the router's last speed test and runs within five minutes once that is older than the interval.
 - Fixed: Speed test download, upload and ping show unknown instead of 0 while the router has no result, for example after a reboot.
