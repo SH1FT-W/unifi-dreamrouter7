@@ -2,14 +2,14 @@
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/images/readme-title-dark.webp" />
-  <img src="docs/images/readme-title-light.webp" alt="Dream Router 7: Your network, in your hands." />
+  <img src="docs/images/readme-title-light.webp" alt="Dream Router 7: your UniFi network in Home Assistant. Local, no cloud. Every UniFi device. WiFi, firewall, ports." />
 </picture>
 
 [![Version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FSH1FT-W%2Funifi-dreamrouter7%2Fmain%2Fcustom_components%2Fudr7%2Fmanifest.json&query=%24.version&label=version&style=flat-square&color=006FFF&labelColor=0B1526)](https://github.com/SH1FT-W/unifi-dreamrouter7/releases/latest)
 [![Home Assistant](https://img.shields.io/badge/Home%20Assistant-2026.9%2B-006FFF?style=flat-square&labelColor=0B1526&logo=homeassistant&logoColor=white)](https://www.home-assistant.io)
 [![Marketplace](https://img.shields.io/badge/Marketplace-default-006FFF?style=flat-square&labelColor=0B1526)](https://hacs.xyz)
 
-<a href="https://sh1ft-w.github.io/unifi-dreamrouter7"><b>Website</b></a>&emsp;<a href="#install">Install</a>&emsp;<a href="#set-up">Set up</a>&emsp;<a href="#entities">Entities</a>&emsp;<a href="CHANGELOG.md">Changelog</a>
+<a href="https://sh1ft-w.github.io/unifi-dreamrouter7"><b>Website</b></a>&emsp;<a href="#get-started">Get started</a>&emsp;<a href="#entities">Entities</a>&emsp;<a href="#examples">Examples</a>&emsp;<a href="CHANGELOG.md">Changelog</a>
 
 </div>
 
@@ -37,29 +37,17 @@ Both can run side by side while you move automations over. Coming from **UniFi N
 
 **New in 26.11:** an event for every new device on the network, internet outages today with the last one, and a write-only WiFi password. Every change is in the [changelog](CHANGELOG.md).
 
-<a id="install"></a>
-## Install
+<a id="get-started"></a><a id="install"></a><a id="set-up"></a>
+## Get started
 
 [![Open in the Marketplace](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=SH1FT-W&repository=unifi-dreamrouter7&category=integration)
 
-Search for **UniFi Dream Router 7** under **Settings > Marketplace** (called HACS before Home Assistant 2026.11), download it and restart Home Assistant.
-
-<details>
-<summary>Install by hand</summary>
-
-1. Download the [latest release](https://github.com/SH1FT-W/unifi-dreamrouter7/releases/latest).
-2. Copy `custom_components/udr7` into `/config/custom_components/` and restart Home Assistant.
-
-</details>
-
-<a id="set-up"></a>
-## Set up
-
 You need a **local** UniFi OS account with admin rights in UniFi Network. UI accounts with two-factor login do not work. Display, night mode and the UniFi Network app update also need admin rights in UniFi OS (Super Admin).
 
-1. **Add the router.** It usually shows up under **Settings > Devices & services > Discovered**. If not, choose **Add integration > UniFi Dream Router 7**; the address is `192.168.1.1` by default.
-2. **Enter username and password.** Site stays `default` unless you renamed it. Leave **Verify certificate** off unless the router has a certificate from a trusted authority.
-3. **Pick your clients** under **Configure**: the phones and devices that should get presence, internet access, reconnect and throughput.
+1. **Install it.** Search for **UniFi Dream Router 7** under **Settings > Marketplace** (called HACS before Home Assistant 2026.11), download it and restart Home Assistant.
+2. **Add the router.** It usually shows up under **Settings > Devices & services > Discovered**. If not, choose **Add integration > UniFi Dream Router 7**; the address is `192.168.1.1` by default.
+3. **Enter username and password.** Site stays `default` unless you renamed it. Leave **Verify certificate** off unless the router has a certificate from a trusted authority.
+4. **Pick your clients** under **Configure**: the phones and devices that should get presence, internet access, reconnect and throughput.
 
 <details>
 <summary>All options</summary>
@@ -73,6 +61,14 @@ You need a **local** UniFi OS account with admin rights in UniFi Network. UI acc
 | Tolerance | Deviation that still counts as "as expected", 10 % by default |
 | New devices also on LAN | Off: "New device connected" only for WiFi devices. On: also for devices connected by cable |
 | Verify certificate | See [Your data](#your-data) |
+
+</details>
+
+<details>
+<summary>Install by hand</summary>
+
+1. Download the [latest release](https://github.com/SH1FT-W/unifi-dreamrouter7/releases/latest).
+2. Copy `custom_components/udr7` into `/config/custom_components/` and restart Home Assistant.
 
 </details>
 
@@ -132,6 +128,7 @@ They work for any client, also one you did not pick in the options.
 
 </details>
 
+<a id="examples"></a>
 ## Examples
 
 Guest WiFi only while guests are here:
@@ -250,3 +247,11 @@ Test requirements: `pip install -r requirements_test.txt`. GitHub Actions runs t
 [Apache License 2.0](LICENSE). Copyright 2026 SH1FT-W.
 
 <sub>UniFi Dream Router 7 is an independent project, not affiliated with, endorsed or sponsored by Ubiquiti Inc. UniFi, UniFi OS, UniFi Network and Dream Router are trademarks of Ubiquiti Inc.</sub>
+
+<br/>
+
+<div align="center">
+<a href="https://sh1ft-w.github.io"><img src="https://sh1ft-w.github.io/readme/footer.png" width="640" alt="All SH1FT-W projects"></a>
+<br/>
+<sub>More open source for Home Assistant and the Mac at <a href="https://sh1ft-w.github.io">sh1ft-w.github.io</a></sub>
+</div>
