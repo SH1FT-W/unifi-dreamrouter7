@@ -491,13 +491,15 @@ async def test_speedtest_running_from_router(
 
 
 async def test_led_without_override(hass: HomeAssistant, aioclient_mock: AiohttpClientMocker) -> None:
-    """Ohne geänderte LED-Einstellung fehlt led_override; led_state zeigt die LED trotzdem an (Issue 2)."""
+    """Without a changed LED setting led_override is missing; led_state still shows the LED (issue 2).
+
+    Access points and switches may report neither field (U7 Pro Wall) and still get their LED."""
     devices = copy.deepcopy(fixture("devices"))
     router = devices["data"][0]
     for key in ("led_override", "led_override_color", "led_override_color_brightness"):
         router.pop(key)
     router["led_state"] = {"pattern": "0", "tempo": 120}
-    # Ohne led_state und led_override: keine LED
+    # Access point without led_state and led_override: LED on the site setting
     for key in ("led_override", "led_override_color", "led_override_color_brightness"):
         devices["data"][1].pop(key, None)
     # Firmware without UniFi OS ledSettings, so the console LED uses led_override as well
@@ -507,7 +509,8 @@ async def test_led_without_override(hass: HomeAssistant, aioclient_mock: Aiohttp
     await _setup(hass)
     led = hass.states.get("light.dream_router_7_status_led")
     assert led is not None and led.state == STATE_ON and led.attributes["override"] == "default"
-    assert hass.states.get("light.u7_lite_status_led") is None
+    ap_led = hass.states.get("light.u7_lite_status_led")
+    assert ap_led is not None and ap_led.attributes["override"] == "default"
     aioclient_mock.mock_calls.clear()
     await hass.services.async_call("light", "turn_off", {"entity_id": "light.dream_router_7_status_led"}, blocking=True)
     assert calls(aioclient_mock, "PUT", "rest/device/gw0000000000000000000001") == [{"led_override": "off"}]

@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Fixed: Access points and switches that report no LED setting at all (seen on a U7 Pro Wall) had no status LED light. They now get it, following the site setting until it is changed.
+
 ## 26.11.8 – 05.11.2026
 
 - Fixed: The automatic speed test did not run when Home Assistant restarted or the integration reloaded more often than the interval, because each start began the interval again. It now counts from the router's last speed test and runs within five minutes once that is older than the interval.

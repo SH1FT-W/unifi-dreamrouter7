@@ -245,8 +245,11 @@ def parse_device(raw: dict[str, Any]) -> Device:
         cpu=num(stats.get("cpu")),
         memory=num(stats.get("mem")),
         temperature=cpu_temp if cpu_temp is not None else next((t for t in temps if t is not None), None),
-        # Ohne geänderte LED-Einstellung fehlt led_override (gesehen am UDR7, Issue 2); led_state zeigt eine LED an
-        led_override=raw.get("led_override") or ("default" if isinstance(raw.get("led_state"), dict) else None),
+        # Without a changed LED setting led_override is missing (seen on the UDR7, issue 2); led_state shows there is an
+        # LED. Access points and switches always have a status LED but may report neither field (U7 Pro Wall,
+        # 10.11.2026); they then follow the site setting ("default").
+        led_override=raw.get("led_override")
+        or ("default" if isinstance(raw.get("led_state"), dict) or raw.get("type") in ("uap", "usw") else None),
         led_color=led_color if isinstance(led_color, str) and led_color.startswith("#") else None,
         led_brightness=_int(raw.get("led_override_color_brightness")),
         locating=bool(raw.get("locating")),
