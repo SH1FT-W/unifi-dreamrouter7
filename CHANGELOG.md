@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 26.11.9 – 10.11.2026
 
 - Fixed: Access points and switches that report no LED setting at all (seen on a U7 Pro Wall) had no status LED light. They now get it, following the site setting until it is changed.
 
