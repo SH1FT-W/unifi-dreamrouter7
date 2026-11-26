@@ -6,7 +6,7 @@
 
 Worauf sich dieses Repo bei Home Assistant verlässt. Bei jeder Änderung am Code mitpflegen.
 
-**Getestet mit:** HA 2026.9.3 (Tests), 2026.10, 2026.11.0b1, 2026.11.2 (Tests, 20.11.2026 ohne Warnungen aus der Integration) · **Mindestversion:** 2026.9.0 (`hacs.json`)
+**Getestet mit:** HA 2026.9.3 (Tests), 2026.10, 2026.11.0b1, 2026.11.2 (Tests, 20.11.2026 ohne Warnungen aus der Integration), 2026.12.0b0 (Tests, 26.11.2026; offen: DeviceInfo als Dict, Frist 2027.12) · **Mindestversion:** 2026.9.0 (`hacs.json`)
 
 ## Annahmen
 
@@ -20,7 +20,7 @@ Worauf sich dieses Repo bei Home Assistant verlässt. Bei jeder Änderung am Cod
 | `entity_id` vor dem Hinzufügen setzen übernimmt HA beim ersten Anlegen (alte IDs aus Network Plus) | `entity.py` `UdrEntity` | `test_setup.py::test_network_sensors` |
 | Text-Entität prüft `native_min`/`native_max` selbst („too short“; bis 2026.10 `ValueError`, ab 2026.11 `ServiceValidationError`, Core #186311) | `text.py` | `test_control.py::test_wlan_password` (akzeptiert beide) |
 | `device_registry.async_get_device` ist abgekündigt; Tests nutzen `async_get_device_by_identifier`/`_by_connection` mit Eintrags-ID | Tests | `test_setup.py`, `test_features.py` |
-| `RepairsFlow` mit `async_create_fix_flow(hass, issue_id, data)` | `repairs.py` | `test_features.py` |
+| `RepairsFlow` mit `async_create_fix_flow(hass, issue_id, data)`; `issue_id` setzt HA selbst (von außen setzen ist seit 2026.12 abgekündigt, Core #182221, der Flow liest es nicht) | `repairs.py` | `test_features.py` |
 | `ImageEntity`: ein neues `_attr_image_last_updated` plus `async_write_ha_state` ändert den Zustand (neues Bild für Dashboards), `async_image` liefert die Bytes; das Bild entsteht im Executor (`hass.async_add_executor_job`) | `image.py` `WlanQrCode` | `test_features.py::test_wlan_qr_code_rebuilt_in_executor` |
 | `EventEntity`: `_trigger_event(typ, attribute)` plus `async_write_ha_state` schreibt ein Ereignis (Zustand = Zeitpunkt, Attribute `event_type` + eigene); der Typ muss in `_attr_event_types` stehen, Übersetzung unter `entity.event.<key>.state_attributes.event_type.state`; nach einem Neustart stellt HA das letzte Ereignis wieder her, ohne neu zu feuern | `event.py` `NewDeviceEvent` | `test_history.py::test_new_device_event`, `::test_new_wired_device_with_option` |
 | Ein `DataUpdateCoordinator` mit `config_entry` ruft beim Entladen `async_shutdown` auf; dort schreibt der Coordinator die gesehenen MACs und Ausfälle sofort (`Store`), damit ein Neuladen nach geänderten Optionen nicht den älteren Stand liest | `coordinator.py` `async_shutdown`, `_history_store` | `test_history.py::test_new_device_event`, `::test_internet_outages` |

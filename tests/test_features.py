@@ -96,7 +96,6 @@ async def test_certificate_changed_creates_repair_and_fix_accepts_it(
 
     flow = await async_create_fix_flow(hass, issue_id, issue.data)
     flow.hass = hass
-    flow.issue_id = issue_id
     result = await flow.async_step_init()
     assert result["description_placeholders"]["new"] == format_fingerprint(NEW_FINGERPRINT)
     mock_router(aioclient_mock)
