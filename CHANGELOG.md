@@ -1,5 +1,11 @@
 # Changelog
 
+## 26.11.10 – 26.11.2026
+
+- Fixed: A single slow or failed poll (a timeout, or HTTP 502/503 while UniFi OS is busy) no longer makes every entity unavailable for 15 to 20 seconds. The last values stay until three polls in a row fail, so automations on state changes (such as a WAN IP change) no longer fire on these blips. Refs #4
+- Fixed: A restart of the Network app (for example for its update) no longer counts as an internet outage. Right after it starts, the app reports the internet as down until its first check. A status that is not ok now counts only if it lasts more than two minutes after the router answers again, then from its first poll. Refs #4
+- Fixed: A timeout is logged as "cannot connect: TimeoutError" instead of "cannot connect: " with an empty reason. Refs #4
+
 ## 26.11.9 – 10.11.2026
 
 - Fixed: Access points and switches that report no LED setting at all (seen on a U7 Pro Wall) had no status LED light. They now get it, following the site setting until it is changed.

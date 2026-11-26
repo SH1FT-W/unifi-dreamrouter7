@@ -26,7 +26,7 @@ from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClien
 from yarl import URL
 
 from custom_components.udr7.api import UdrClient, UdrError, format_fingerprint
-from custom_components.udr7.const import DOMAIN
+from custom_components.udr7.const import DOMAIN, FAILED_POLLS_TOLERATED
 from custom_components.udr7.diagnostics import async_get_config_entry_diagnostics
 
 from .conftest import API, BASE, ENTRY_DATA, FINGERPRINT, GW, HOST, NOW, SW, V2, calls, fixture, mock_router
@@ -163,12 +163,18 @@ async def test_read_fingerprint_failures(failure: str) -> None:
 # --- Ausfälle -------------------------------------------------------------------------------------------------------
 
 
+async def _fail(hass: HomeAssistant, entry: MockConfigEntry) -> None:
+    """Poll until the tolerated failed polls are used up (the last one makes the entities unavailable)."""
+    for _ in range(FAILED_POLLS_TOLERATED + 1):
+        await _tick(hass, entry)
+
+
 async def test_unreachable_and_back(
     hass: HomeAssistant, setup: MockConfigEntry, aioclient_mock: AiohttpClientMocker
 ) -> None:
     aioclient_mock.clear_requests()
     aioclient_mock.get(f"{API}/stat/health", status=502)
-    await _tick(hass, setup)
+    await _fail(hass, setup)
     assert hass.states.get(LATENCY).state == STATE_UNAVAILABLE
     mock_router(aioclient_mock)
     await _tick(hass, setup)
@@ -193,8 +199,8 @@ async def test_session_still_rejected_is_unavailable(
     aioclient_mock.clear_requests()
     aioclient_mock.get(f"{API}/stat/health", status=401)
     mock_router(aioclient_mock, clear=False)
-    await _tick(hass, setup)
-    assert len(calls(aioclient_mock, "POST", "/api/auth/login")) == 1
+    await _fail(hass, setup)
+    assert len(calls(aioclient_mock, "POST", "/api/auth/login")) == FAILED_POLLS_TOLERATED + 1
     assert hass.states.get(LATENCY).state == STATE_UNAVAILABLE
     assert not hass.config_entries.flow.async_progress_by_handler(DOMAIN)
 
@@ -245,7 +251,7 @@ async def test_request_failures(
     aioclient_mock.clear_requests()
     aioclient_mock.get(f"{API}/stat/health", **response)
     mock_router(aioclient_mock, clear=False)
-    await _tick(hass, setup)
+    await _fail(hass, setup)
     assert hass.states.get(LATENCY).state == STATE_UNAVAILABLE
     assert message in str(setup.runtime_data.last_exception)
 

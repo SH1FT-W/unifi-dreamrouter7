@@ -22,6 +22,9 @@ CONFIG_EVERY = 4
 # Systeminfo, UniFi-OS-Firmware und App-Updates ändern sich selten: jede 20. Runde = alle 5 Minuten
 SLOW_EVERY = 20
 HTTP_TIMEOUT = 20
+# A single slow or failed poll (timeout, HTTP 502/503 while UniFi OS is busy) keeps the last values; only this many
+# failed polls in a row make the entities unavailable
+FAILED_POLLS_TOLERATED = 2
 # Gemerkte Port-Einstellungen (.storage)
 STORAGE_VERSION = 1
 
@@ -49,6 +52,10 @@ CONF_NEW_DEVICES_WIRED = "new_devices_wired"
 
 # Internet outages are kept this long (enough for "today" and the last outage)
 OUTAGE_KEEP = timedelta(days=2)
+# Right after the Network app (re)starts, stat/health reports www "error" until its first internet check (live
+# 23.11.2026: 40-55 s, no latency, same WAN IP). The router itself is reachable during a real outage, so a status
+# that is not "ok" only counts as an outage once it lasts longer than this after the router answers again.
+OUTAGE_SETTLE = timedelta(minutes=2)
 
 # Sendeleistung der Funkmodule (radio_table[].tx_power_mode); „custom“ nur anzeigen, nicht wählbar
 TX_POWER_MODES = ["auto", "high", "medium", "low"]

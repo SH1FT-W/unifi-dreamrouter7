@@ -4,6 +4,7 @@ Systeminfo und Updates alle 5 Minuten. Nach einem Befehl wird sofort alles neu g
 from __future__ import annotations
 
 from collections.abc import Awaitable, Callable
+import dataclasses
 from datetime import datetime
 import logging
 from typing import Any
@@ -35,7 +36,9 @@ from .const import (
     CONFIG_EVERY,
     DEVICES_EVERY,
     DOMAIN,
+    FAILED_POLLS_TOLERATED,
     OUTAGE_KEEP,
+    OUTAGE_SETTLE,
     SLOW_EVERY,
     SPEEDTEST_SECONDS,
     SPEEDTEST_TIMEOUT,
@@ -112,6 +115,11 @@ class UdrCoordinator(DataUpdateCoordinator[UdrData]):
         # rest/user answered in this round (a failed request also yields {}, which must not seed the known MACs)
         self._known_clients_fresh = False
         self._outages: list[Outage] = []
+        # Failed polls in a row (kept data meanwhile) and when the router answered again after failed polls
+        self._failed_polls = 0
+        self._answering_since: datetime | None = None
+        # First not-"ok" internet status seen while the Network app may still be settling after a restart
+        self._outage_pending: datetime | None = None
         # Produktbilder je sysid (catalog.py), im Hintergrund nach dem Start geladen
         self.pictures: dict[str, str] = {}
 
@@ -179,9 +187,17 @@ class UdrCoordinator(DataUpdateCoordinator[UdrData]):
             return
         now = dt_util.utcnow()
         ongoing = self._outages[-1] if self._outages and self._outages[-1].end is None else None
+        if status == "ok":
+            self._outage_pending = None
         if status != "ok" and ongoing is None:
+            start = self._outage_pending or now
+            if self._answering_since is not None and now - self._answering_since < OUTAGE_SETTLE:
+                # Network app just came back: its first internet check may still be pending
+                self._outage_pending = start
+                return
+            self._outage_pending = None
             self._outages = [o for o in self._outages if now - (o.end or now) < OUTAGE_KEEP]
-            self._outages.append(Outage(now))
+            self._outages.append(Outage(start))
             self._save_history()
         elif status == "ok" and ongoing is not None:
             self._outages[-1] = Outage(ongoing.start, now)
@@ -249,6 +265,9 @@ class UdrCoordinator(DataUpdateCoordinator[UdrData]):
                 # Bis ein neues Ergebnis da ist, gilt der Speedtest als laufend
                 data.speedtest_started_at = old.speedtest_started_at
             data.new_clients = self._new_clients(data)
+            if self._failed_polls:
+                self._failed_polls = 0
+                self._answering_since = dt_util.utcnow()
             self._track_outages(data)
             data.outages = list(self._outages)
         except UdrAuthError as err:
@@ -257,6 +276,13 @@ class UdrCoordinator(DataUpdateCoordinator[UdrData]):
             self._raise_cert_issue(err)
             raise UpdateFailed(translation_domain=DOMAIN, translation_key="cert_changed") from err
         except UdrError as err:
+            self._failed_polls += 1
+            self._answering_since = None
+            if old is not None and self._failed_polls <= FAILED_POLLS_TOLERATED:
+                # One slow or failed answer is no lost router: keep the last values (without the new devices of
+                # that round, the event entity would report them again)
+                _LOGGER.debug("Poll %s failed, keeping the last data: %s", self._failed_polls, err)
+                return dataclasses.replace(old, new_clients=[])
             raise UpdateFailed(
                 translation_domain=DOMAIN, translation_key="unreachable", translation_placeholders={"error": str(err)}
             ) from err

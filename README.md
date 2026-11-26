@@ -187,7 +187,7 @@ actions:
 
 - Ports to the internet and the uplink of a switch have no on/off switch, so you cannot cut yourself off there. Predefined zone firewall rules cannot be switched, as in UniFi.
 - Turning a port off works like the official integration (port security without allowed devices). The integration remembers the port's settings and restores them exactly; a port turned off in UniFi Network itself comes back with its defaults.
-- Values are polled, not pushed: presence changes show within 30 seconds plus the away time. Internet outages shorter than 15 seconds may be missed.
+- Values are polled, not pushed: presence changes show within 30 seconds plus the away time. Internet outages shorter than 15 seconds may be missed. A not ok status in the first two minutes after the Network app restarts only counts if it lasts longer, because the app reports the internet as down until its first check.
 - Transmit power "custom" (fixed dBm) shows as unknown; set it in UniFi Network.
 
 <details>
@@ -197,7 +197,7 @@ actions:
 - **"No access to UniFi Network".** Give the account admin rights in UniFi Network.
 - **"No admin rights" for display, night mode or app update.** These are UniFi OS settings; give the account Super Admin.
 - **A command fails.** The message names what UniFi answered, most often missing rights.
-- **All entities unavailable.** The router does not answer; they come back on their own. A new address: **three dots > Reconfigure**.
+- **All entities unavailable.** The router did not answer three polls in a row (a single failed poll keeps the last values); they come back on their own. A new address: **three dots > Reconfigure**.
 
 When you open an [issue](https://github.com/SH1FT-W/unifi-dreamrouter7/issues), attach the diagnostics (**Settings > Devices & services > UniFi Dream Router 7 > three dots > Download diagnostics**).
 

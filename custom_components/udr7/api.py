@@ -29,6 +29,11 @@ from .const import HTTP_TIMEOUT
 _LOGGER = logging.getLogger(__name__)
 
 
+def _reason(err: BaseException) -> str:
+    """Error text for the log; a TimeoutError has none, so name the type."""
+    return str(err) or type(err).__name__
+
+
 class UdrError(Exception):
     """Dream Router nicht erreichbar oder unerwartete Antwort."""
 
@@ -604,7 +609,7 @@ class UdrClient:
             except aiohttp.ServerFingerprintMismatch as err:
                 raise UdrCertificateError(err.got.hex()) from err
             except (TimeoutError, aiohttp.ClientError) as err:
-                raise UdrError(f"cannot connect: {err}") from err
+                raise UdrError(f"cannot connect: {_reason(err)}") from err
             except (RuntimeError, AttributeError, AssertionError) as err:
                 # HA detached the session while this request was still connecting (entry unloaded)
                 if not self._session.closed:
@@ -651,7 +656,7 @@ class UdrClient:
         except aiohttp.ServerFingerprintMismatch as err:
             raise UdrCertificateError(err.got.hex()) from err
         except (TimeoutError, aiohttp.ClientError) as err:
-            raise UdrError(f"cannot connect: {err}") from err
+            raise UdrError(f"cannot connect: {_reason(err)}") from err
         except (RuntimeError, AttributeError, AssertionError) as err:
             # HA detached the session while this request was still connecting (entry unloaded)
             if not self._session.closed:
@@ -685,7 +690,7 @@ class UdrClient:
                         raise UdrError(f"/api/system: HTTP {resp.status}")
                     text = await resp.text()
         except (TimeoutError, aiohttp.ClientError) as err:
-            raise UdrError(f"cannot connect: {err}") from err
+            raise UdrError(f"cannot connect: {_reason(err)}") from err
         except (RuntimeError, AttributeError, AssertionError) as err:
             # HA detached the session while this request was still connecting (entry unloaded)
             if not self._session.closed:
@@ -708,7 +713,7 @@ class UdrClient:
             async with asyncio.timeout(HTTP_TIMEOUT):
                 _reader, writer = await asyncio.open_connection(self.host, 443, ssl=context)
         except (TimeoutError, OSError) as err:
-            raise UdrError(f"cannot connect: {err}") from err
+            raise UdrError(f"cannot connect: {_reason(err)}") from err
         try:
             ssl_object = writer.get_extra_info("ssl_object")
             der = ssl_object.getpeercert(binary_form=True) if ssl_object else None
